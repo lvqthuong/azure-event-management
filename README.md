@@ -15,10 +15,10 @@ The Event Management System is a web application built with ASP.NET Core, Entity
 1. **User registration and authentication** with ASP.NET Core Identity.
 2. **Role-based authorization** (Admin, EventProvider, User).
 3. **CRUD operations** for events.
-4. **Event registration with FIFO processing** using Azure Service Bus and Azure Functions.
+4. **Event registration with FIFO processing** using Azure Event-based or Message-based services and Azure Functions.
 5. **Storage of event metadata and user interactions** in Cosmos DB for NoSQL. (_Optional_)
 6. **Storage of images and documents** in Azure Blob Storage.
-7. **Caching of event data** with Redis. (_Optional_)
+7. **Caching of event data** with Redis/CDN, depends on which is suitable for your design. (_Optional_)
 8. **Monitoring and diagnostics** with Azure Application Insights.
 
 ## Database Structure
