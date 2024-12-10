@@ -2,9 +2,7 @@ package com.example.fs19_azure.entity;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Type;
 
@@ -21,6 +19,9 @@ public class Events {
     @Id
     @GeneratedValue
     private UUID id;
+
+    @Column(nullable = false)
+    private String type;
 
     @Column(nullable = false)
     private String name;

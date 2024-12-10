@@ -1,6 +1,9 @@
 package com.example.fs19_azure.service;
 
 import com.example.fs19_azure.dto.EventsCreate;
+import com.example.fs19_azure.dto.EventsRead;
+import com.example.fs19_azure.dto.EventsUpdate;
+import com.example.fs19_azure.dto.mapper.EventsMapper;
 import com.example.fs19_azure.entity.Events;
 import com.example.fs19_azure.entity.Users;
 import com.example.fs19_azure.exceptions.ErrorMessage;
@@ -8,6 +11,7 @@ import com.example.fs19_azure.exceptions.GlobalException;
 import com.example.fs19_azure.repository.EventsRepository;
 import com.example.fs19_azure.repository.UsersRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,7 @@ public class EventsService {
         Events event = eventsRepository.save(
             Events.builder()
             .name(dto.name())
+            .type(dto.type())
             .description(dto.description())
             .startDate(Instant.parse(dto.startDate()))
             .endDate(Instant.parse(dto.endDate()))
@@ -58,33 +63,26 @@ public class EventsService {
     }
 
     @Transactional
-    public Events updateEvent(UUID id, EventsCreate dto) {
-        Optional<Events> event = eventsRepository.findById(id);
-        if (event.isEmpty()) {
+    public EventsRead updateEvent(UUID id, EventsUpdate dto) {
+        Optional<Events> existingEvent = eventsRepository.findById(id);
+        if (existingEvent.isEmpty()) {
             throw new GlobalException(HttpStatus.NOT_FOUND, ErrorMessage.EVENT_NOT_FOUND);
         }
 
-        Users organizer = usersRepository.findById(UUID.fromString(dto.organizerId()))
-            .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND));
+        //fetch the organizer
+        Hibernate.initialize(existingEvent.get().getOrganizer());
 
-        Events updatedEvent = eventsRepository.save(
-            Events.builder()
-            .id(id)
-            .name(dto.name())
-            .description(dto.description())
-            .startDate(Instant.parse(dto.startDate()))
-            .endDate(Instant.parse(dto.endDate()))
-            .location(dto.location())
-            .organizer(organizer)
-            .metadata(dto.metadata())
-            .build()
-        );
+        //update the event
+        EventsMapper.INSTANCE.toEventsFromEventsUpdate(dto, existingEvent.get());
+
+        //save the updated event
+        Events updatedEvent = eventsRepository.save(existingEvent.get());
 
         if (updatedEvent == null) {
             throw new GlobalException(HttpStatus.BAD_REQUEST, ErrorMessage.EVENT_UPDATE_FAILED);
         }
 
-        return updatedEvent;
+        return EventsMapper.toEventsRead(updatedEvent);
     }
 
     @Transactional

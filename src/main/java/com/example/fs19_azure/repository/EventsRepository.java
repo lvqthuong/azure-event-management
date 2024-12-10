@@ -18,4 +18,5 @@ public interface EventsRepository extends JpaRepository<Events, UUID> {
     int deleteByIdSoft(@Param("id") UUID id);
 
     List<Events> findByDeletedFalse();
+    List<Events> findByName(String name);
 }
