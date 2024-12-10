@@ -7,41 +7,34 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "users")
-public class Users {
+@Table(name = "events_registrations")
+public class EventsRegistrations {
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
+    private Events event;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Users user;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
+    private String status; // e.g., "attending", "declined"
 
     @Column(name = "created_at", columnDefinition = "timestamp with time zone default now()")
     private Instant createdAt;
 
     @Column(name = "updated_at", columnDefinition = "timestamp with time zone default now()")
     private Instant updatedAt;
-
-    @Column(nullable = false)
-    private boolean deleted;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventsRegistrations> registrations = new ArrayList<>();
 
     @PrePersist
     public void onPrePersist() {

@@ -1,14 +1,14 @@
 package com.example.fs19_azure.entity;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Type;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,8 +16,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "users")
-public class Users {
+@Table(name = "events")
+public class Events {
     @Id
     @GeneratedValue
     private UUID id;
@@ -25,23 +25,34 @@ public class Users {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column
+    private String description;
 
     @Column(nullable = false)
-    private String password;
+    private String location;
+
+    @Column(nullable = false)
+    private Instant startDate;
+
+    @Column(nullable = false)
+    private Instant endDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organizer_id", nullable = false)
+    private Users organizer;
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private String metadata;
+
+    @Column
+    private boolean deleted;
 
     @Column(name = "created_at", columnDefinition = "timestamp with time zone default now()")
     private Instant createdAt;
 
     @Column(name = "updated_at", columnDefinition = "timestamp with time zone default now()")
     private Instant updatedAt;
-
-    @Column(nullable = false)
-    private boolean deleted;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventsRegistrations> registrations = new ArrayList<>();
 
     @PrePersist
     public void onPrePersist() {

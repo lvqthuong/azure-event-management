@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,32 +14,33 @@ import java.util.UUID;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "users")
-public class Users {
+@Table(name = "events_attachments")
+public class EventsAttachments {
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false, unique = true)
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
+    private Events event;
 
     @Column(nullable = false)
-    private String password;
+    private String blob_url;
+
+    @Column(nullable = false)
+    private String blob_name;
+
+    @Column
+    private String blob_type;
+
+    @Column
+    private Long blob_size;
 
     @Column(name = "created_at", columnDefinition = "timestamp with time zone default now()")
     private Instant createdAt;
 
     @Column(name = "updated_at", columnDefinition = "timestamp with time zone default now()")
     private Instant updatedAt;
-
-    @Column(nullable = false)
-    private boolean deleted;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventsRegistrations> registrations = new ArrayList<>();
 
     @PrePersist
     public void onPrePersist() {
