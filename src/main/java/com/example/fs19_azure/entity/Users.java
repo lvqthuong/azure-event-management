@@ -1,9 +1,7 @@
 package com.example.fs19_azure.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
@@ -39,10 +37,7 @@ public class Users {
 
     @Column(nullable = false)
     private boolean deleted;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventsRegistrations> registrations = new ArrayList<>();
-
+    
     @PrePersist
     public void onPrePersist() {
         this.setCreatedAt(Instant.now());

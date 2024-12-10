@@ -24,7 +24,9 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/events/**"
+                    "/swagger-ui/**"
+                    , "/v3/api-docs/**"
+                    , "/events/**"
                     , "/events"
                     , "/users"
                 ).permitAll() // Disable security for /public

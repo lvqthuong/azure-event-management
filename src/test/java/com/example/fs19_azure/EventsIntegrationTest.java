@@ -1,6 +1,12 @@
 package com.example.fs19_azure;
 
 import com.example.fs19_azure.dto.EventsCreate;
+import com.example.fs19_azure.dto.EventsUpdate;
+import com.example.fs19_azure.dto.UsersCreate;
+import com.example.fs19_azure.repository.EventsRepository;
+import com.example.fs19_azure.repository.UsersRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -18,6 +26,48 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class EventsIntegrationTest {
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    private UsersRepository usersRepository;
+
+    @Autowired
+    private EventsRepository eventsRepository;
+
+    private String eventMetadata = "{\n" +
+        "  \"key\": \"value\"\n" +
+        "}";
+    private UUID userId;
+    private UUID eventId;
+
+    @BeforeEach
+    void setup() throws Exception {
+        mockMvc.perform(post("/users")
+            .contentType("application/json")
+            .content(new ObjectMapper().writeValueAsString(
+                new UsersCreate(
+                    "test-user@fs19java.com"
+                    , "password"
+                    , "User Test"
+                ))));
+
+        userId = usersRepository.findByEmail("test-user@fs19java.com").getId();
+
+        mockMvc.perform(post("/events/create")
+            .contentType("application/json")
+            .content(new ObjectMapper().writeValueAsString(
+                new EventsCreate(
+                    "Test Event"
+                    , "music"
+                    ,"Test Description"
+                    , "Test Location"
+                    , "2021-10-10T12:00:00Z"
+                    , "2021-10-10T10:00:00Z"
+                    , userId.toString()
+                    , eventMetadata
+                    ,""
+                ))));
+        eventId = eventsRepository.findByName("Test Event").get(0).getId();
+    }
 
     @Nested
     class GetEventsTest {
@@ -37,21 +87,19 @@ public class EventsIntegrationTest {
         @Test
         void shouldBeAbleToCreateEvent() throws Exception {
 
-            String metadataJson = new ObjectMapper().writeValueAsString("{\n" +
-                "  \"key\": \"value\"\n" +
-                "}");
-
             mockMvc.perform(post("/events/create")
                 .contentType("application/json")
                 .content(new ObjectMapper().writeValueAsString(
                     new EventsCreate(
                         "Test Event"
-                        , "Test Description"
+                        , "music"
+                        ,"Test Description"
                         , "Test Location"
                         , "2021-10-10T12:00:00Z"
                         , "2021-10-10T10:00:00Z"
-                        , "00000000-0000-0000-0000-000000000000"
-                        , metadataJson
+                        , userId.toString()
+                        , eventMetadata
+                        ,""
                     ))))
                 .andExpect(status().isCreated())
                 .andDo(print());
@@ -64,12 +112,14 @@ public class EventsIntegrationTest {
                 .content(new ObjectMapper().writeValueAsString(
                     new EventsCreate(
                         ""
-                        , "Test Description"
+                        , "music"
+                        ,"Test Description"
                         , "Test Location"
-                        , "2021-10-10T10:00:00Z"
                         , "2021-10-10T12:00:00Z"
-                        , "00000000-0000-0000-0000-000000000000"
-                        , ""
+                        , "2021-10-10T10:00:00Z"
+                        , userId.toString()
+                        , eventMetadata
+                        ,""
                     ))))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
@@ -82,12 +132,14 @@ public class EventsIntegrationTest {
                     .content(new ObjectMapper().writeValueAsString(
                         new EventsCreate(
                             "Test Event"
-                            , "Test Description"
+                            , "music"
+                            ,"Test Description"
                             , ""
-                            , "2021-10-10T10:00:00Z"
                             , "2021-10-10T12:00:00Z"
-                            , "00000000-0000-0000-0000-000000000000"
-                            , ""
+                            , "2021-10-10T10:00:00Z"
+                            , userId.toString()
+                            , eventMetadata
+                            ,""
                         ))))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
@@ -96,25 +148,35 @@ public class EventsIntegrationTest {
 
     @Nested
     class UpdateEventsTest {
+
         @Test
         void shouldBeAbleToUpdateEventName() throws Exception {
-            String metadataJson = new ObjectMapper().writeValueAsString("{\n" +
-                "  \"key\": \"value\"\n" +
-                "}");
-
-            mockMvc.perform(put("/events/create/00000000-0000-0000-0000-000000000000")
+            mockMvc.perform(put("/events/update/" + eventId)
                 .contentType("application/json")
                 .content(new ObjectMapper().writeValueAsString(
-                    new EventsCreate(
-                        "Test Event"
-                        , "Test Description"
-                        , "Test Location"
-                        , "2021-10-10T12:00:00Z"
-                        , "2021-10-10T10:00:00Z"
-                        , "00000000-0000-0000-0000-000000000000"
-                        , metadataJson
-                    ))))
+                    new EventsUpdate(
+                        "Updated Event Name",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    )
+                )))
                 .andExpect(status().isOk())
+                .andDo(print());
+        }
+
+        @Test
+        void shouldNotBeAbleToUpdateWithInvalidFieldInJSON() throws Exception {
+            mockMvc.perform(put("/events/update/" + eventId)
+                    .contentType("application/json")
+                    .content(new ObjectMapper().writeValueAsString(
+                        "{\"organizerId\": \"00000000-0000-0000-0000-000000000000\"}"
+                        )
+                    ))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
         }
     }

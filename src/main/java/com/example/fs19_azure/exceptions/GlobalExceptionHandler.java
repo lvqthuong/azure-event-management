@@ -1,8 +1,10 @@
 package com.example.fs19_azure.exceptions;
 
 import com.example.fs19_azure.controller.response.GlobalResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,7 +31,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<GlobalResponse> handleValidationExceptions(HttpMessageNotReadableException ex) {
 
+        List<GlobalResponse.ErrorItem> errors = List.of(new GlobalResponse.ErrorItem(ErrorMessage.INVALID_JSON.getMessage()));
+        return new ResponseEntity<>(
+            new GlobalResponse(HttpStatus.BAD_REQUEST.value(), errors)
+            , null
+            , HttpStatus.BAD_REQUEST
+        );
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<GlobalResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
