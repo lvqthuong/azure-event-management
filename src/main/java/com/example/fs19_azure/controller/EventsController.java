@@ -21,7 +21,7 @@ public class EventsController {
     @Autowired
     private EventsService eventsService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<GlobalResponse<Events>> createEvent(@RequestBody @Valid EventsCreate dto) {
         return new ResponseEntity<>(
             new GlobalResponse<>(
@@ -44,11 +44,23 @@ public class EventsController {
     }
 
     @GetMapping
-    public ResponseEntity<GlobalResponse<List<Events>>> getEvents() {
+    public ResponseEntity<GlobalResponse<List<Events>>> getActiveEvents() {
         return new ResponseEntity<>(
             new GlobalResponse<>(
                 HttpStatus.OK.value()
-                , eventsService.getAllEvents()
+                , eventsService.getAllActiveEvents()
+            )
+            , HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<GlobalResponse<String>> deleteEvent(@PathVariable UUID id) {
+        int result = eventsService.deleteEvent(id);
+        return new ResponseEntity<>(
+            new GlobalResponse<>(
+                HttpStatus.OK.value()
+                , "Event deleted"
             )
             , HttpStatus.OK
         );

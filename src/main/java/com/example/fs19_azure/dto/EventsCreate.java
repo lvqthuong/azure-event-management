@@ -18,6 +18,10 @@ public record EventsCreate(
         String endDate,
 
         @NotBlank(message = "must not be empty or whitespace")
-        String organizerId
+        String organizerId,
+
+        String metadata,
+
+        String attachments
 ) {
 }

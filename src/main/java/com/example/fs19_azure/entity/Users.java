@@ -1,8 +1,20 @@
 package com.example.fs19_azure.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "users")
 public class Users {
@@ -16,5 +28,29 @@ public class Users {
     @Column(nullable = false, unique = true)
     private String email;
 
-    // Getters and setters
+    @Column(nullable = false)
+    private String password;
+
+    @Column(name = "created_at", columnDefinition = "timestamp with time zone default now()")
+    private Instant createdAt;
+
+    @Column(name = "updated_at", columnDefinition = "timestamp with time zone default now()")
+    private Instant updatedAt;
+
+    @Column(nullable = false)
+    private boolean deleted;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventsRegistrations> registrations = new ArrayList<>();
+
+    @PrePersist
+    public void onPrePersist() {
+        this.setCreatedAt(Instant.now());
+        this.setUpdatedAt(Instant.now());
+    }
+
+    @PreUpdate
+    public void onPreUpdate() {
+        this.setUpdatedAt(Instant.now());
+    }
 }

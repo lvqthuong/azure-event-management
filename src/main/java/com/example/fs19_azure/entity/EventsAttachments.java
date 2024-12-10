@@ -1,12 +1,10 @@
 package com.example.fs19_azure.entity;
 
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Type;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -16,37 +14,27 @@ import java.util.UUID;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "events")
-public class Events {
+@Table(name = "events_attachments")
+public class EventsAttachments {
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column
-    private String description;
-
-    @Column(nullable = false)
-    private String location;
-
-    @Column(nullable = false)
-    private Instant startDate;
-
-    @Column(nullable = false)
-    private Instant endDate;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organizer_id", nullable = false)
-    private Users organizer;
+    @JoinColumn(name = "event_id", nullable = false)
+    private Events event;
 
-    @Type(JsonType.class)
-    @Column(columnDefinition = "jsonb")
-    private String metadata;
+    @Column(nullable = false)
+    private String blob_url;
+
+    @Column(nullable = false)
+    private String blob_name;
 
     @Column
-    private boolean deleted;
+    private String blob_type;
+
+    @Column
+    private Long blob_size;
 
     @Column(name = "created_at", columnDefinition = "timestamp with time zone default now()")
     private Instant createdAt;

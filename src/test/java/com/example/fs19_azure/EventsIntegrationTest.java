@@ -36,7 +36,12 @@ public class EventsIntegrationTest {
     class PostEventsTest {
         @Test
         void shouldBeAbleToCreateEvent() throws Exception {
-            mockMvc.perform(post("/events")
+
+            String metadataJson = new ObjectMapper().writeValueAsString("{\n" +
+                "  \"key\": \"value\"\n" +
+                "}");
+
+            mockMvc.perform(post("/events/create")
                 .contentType("application/json")
                 .content(new ObjectMapper().writeValueAsString(
                     new EventsCreate(
@@ -46,6 +51,7 @@ public class EventsIntegrationTest {
                         , "2021-10-10T12:00:00Z"
                         , "2021-10-10T10:00:00Z"
                         , "00000000-0000-0000-0000-000000000000"
+                        , metadataJson
                     ))))
                 .andExpect(status().isCreated())
                 .andDo(print());
@@ -53,7 +59,7 @@ public class EventsIntegrationTest {
 
         @Test
         void shouldNotBeAbleToCreateEventWithBlankName() throws Exception {
-            mockMvc.perform(post("/events")
+            mockMvc.perform(post("/events/create")
                 .contentType("application/json")
                 .content(new ObjectMapper().writeValueAsString(
                     new EventsCreate(
@@ -63,6 +69,7 @@ public class EventsIntegrationTest {
                         , "2021-10-10T10:00:00Z"
                         , "2021-10-10T12:00:00Z"
                         , "00000000-0000-0000-0000-000000000000"
+                        , ""
                     ))))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
@@ -70,7 +77,7 @@ public class EventsIntegrationTest {
 
         @Test
         void shouldNotBeAbleToCreateEventWithBlankLocation() throws Exception {
-            mockMvc.perform(post("/events")
+            mockMvc.perform(post("/events/create")
                     .contentType("application/json")
                     .content(new ObjectMapper().writeValueAsString(
                         new EventsCreate(
@@ -80,8 +87,44 @@ public class EventsIntegrationTest {
                             , "2021-10-10T10:00:00Z"
                             , "2021-10-10T12:00:00Z"
                             , "00000000-0000-0000-0000-000000000000"
+                            , ""
                         ))))
                 .andExpect(status().isBadRequest())
+                .andDo(print());
+        }
+    }
+
+    @Nested
+    class UpdateEventsTest {
+        @Test
+        void shouldBeAbleToUpdateEventName() throws Exception {
+            String metadataJson = new ObjectMapper().writeValueAsString("{\n" +
+                "  \"key\": \"value\"\n" +
+                "}");
+
+            mockMvc.perform(put("/events/create/00000000-0000-0000-0000-000000000000")
+                .contentType("application/json")
+                .content(new ObjectMapper().writeValueAsString(
+                    new EventsCreate(
+                        "Test Event"
+                        , "Test Description"
+                        , "Test Location"
+                        , "2021-10-10T12:00:00Z"
+                        , "2021-10-10T10:00:00Z"
+                        , "00000000-0000-0000-0000-000000000000"
+                        , metadataJson
+                    ))))
+                .andExpect(status().isOk())
+                .andDo(print());
+        }
+    }
+
+    @Nested
+    class DeleteEventsTest {
+        @Test
+        void shouldReturnNotFoundIfDeleteFakeEvent() throws Exception {
+            mockMvc.perform(delete("/events/delete/00000000-0000-0000-0000-000000000000"))
+                .andExpect(status().isNotFound())
                 .andDo(print());
         }
     }
