@@ -5,3 +5,4 @@ obj/
 target
 .idea/
 .DS_Store
+.env

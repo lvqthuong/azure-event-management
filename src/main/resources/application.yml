@@ -7,9 +7,9 @@ spring:
           audience: api://fc037e21-c170-48d2-9aa8-543878aff8b1
           jwk-set-uri: https://login.microsoftonline.com/5a3e7946-7ac8-45cd-82c5-1527818e7dff/discovery/v2.0/keys
   datasource:
-    url: jdbc:postgresql://localhost:5432/wade
-    username: wade
-    password: wade
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
