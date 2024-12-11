@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -22,13 +23,18 @@ public class EventsRegistrations {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Events event;
-
+/*
+ *  Remove the relationship with the Users entity
+ *
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
+*/
+    @Column(nullable = false)
+    private UUID userId;
 
     @Column(nullable = false)
-    private String status; // e.g., "attending", "declined"
+    private EventsRegistrationsStatus status; // e.g., "attending", "declined"
 
     @Column(name = "created_at", columnDefinition = "timestamp with time zone default now()")
     private Instant createdAt;
