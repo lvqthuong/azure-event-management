@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -51,6 +52,17 @@ public class GlobalExceptionHandler {
                 , List.of(new GlobalResponse.ErrorItem(ex.getMessage()))
             ),
             HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<GlobalResponse> handleNoSuchElementException(NoSuchElementException ex) {
+        return new ResponseEntity<>(
+            new GlobalResponse<>(
+                HttpStatus.NOT_FOUND.value()
+                , List.of(new GlobalResponse.ErrorItem("Item not found"))
+            )
+            , HttpStatus.NOT_FOUND
+        );
     }
 
     @ExceptionHandler(GlobalException.class)
