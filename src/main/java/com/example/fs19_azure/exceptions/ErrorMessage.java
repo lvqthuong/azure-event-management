@@ -11,7 +11,11 @@ public enum ErrorMessage {
     USER_NOT_FOUND("User not found"),
     USER_ALREADY_EXISTS("User already exists"),
 
-    EMAIL_ALREADY_USED("Email already used"),
+    EMAIL_ALREADY_USED("Email already used")
+
+    //Event Registrations
+    , USER_ALREADY_REGISTERED("User already registered for the event")
+    , MAPPING_SEND_MESSAGE_ERROR("Mapping send message error"),
 
     //Events
     EVENT_CREATION_FAILED("Event creation failed")

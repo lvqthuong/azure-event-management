@@ -17,8 +17,8 @@ import java.util.UUID;
 @Table(name = "events_registrations")
 public class EventsRegistrations {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
@@ -34,7 +34,7 @@ public class EventsRegistrations {
     private UUID userId;
 
     @Column(nullable = false)
-    private EventsRegistrationsStatus status; // e.g., "attending", "declined"
+    private String status; // PENDING | REGISTERED | CANCELLED
 
     @Column(name = "created_at", columnDefinition = "timestamp with time zone default now()")
     private Instant createdAt;

@@ -2,6 +2,7 @@ package com.example.fs19_azure.exceptions;
 
 import com.example.fs19_azure.controller.response.GlobalResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -62,6 +63,28 @@ public class GlobalExceptionHandler {
                 , List.of(new GlobalResponse.ErrorItem("Item not found"))
             )
             , HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(JsonProcessingException.class)
+    public ResponseEntity<GlobalResponse> handleJsonProcessingException(JsonProcessingException ex) {
+        return new ResponseEntity<>(
+            new GlobalResponse<>(
+                HttpStatus.BAD_REQUEST.value()
+                , List.of(new GlobalResponse.ErrorItem(ErrorMessage.INVALID_JSON.getMessage()))
+            )
+            , HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(SendMessageProcessingException.class)
+    public ResponseEntity<GlobalResponse> handleSendMessageProcessingException(SendMessageProcessingException ex) {
+        return new ResponseEntity<>(
+            new GlobalResponse<>(
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+                , List.of(new GlobalResponse.ErrorItem(ErrorMessage.MAPPING_SEND_MESSAGE_ERROR.getMessage()))
+            )
+            , HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
 
