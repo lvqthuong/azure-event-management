@@ -7,11 +7,9 @@ import com.example.fs19_azure.entity.EventsRegistrationsStatus;
 import com.example.fs19_azure.exceptions.ErrorMessage;
 import com.example.fs19_azure.exceptions.GlobalException;
 import com.example.fs19_azure.repository.EventsRepository;
-import com.example.fs19_azure.service.ServiceBusClientService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.fs19_azure.service.ServiceBusProducerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.azure.messaging.servicebus.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -33,7 +30,7 @@ public class EventsRegistrationsController {
     private EventsRepository eventsRepository;
 
     @Autowired
-    private ServiceBusClientService serviceBusClientService;
+    private ServiceBusProducerService serviceBusProducerService;
 
     @PostMapping
     public ResponseEntity<GlobalResponse<String>> register(@Valid @PathVariable UUID id) throws Exception {
@@ -52,7 +49,7 @@ public class EventsRegistrationsController {
             , EventsRegistrationsStatus.REGISTERED.name()
             , Instant.now().toString()
         );
-        serviceBusClientService.sendMessage(message);
+        serviceBusProducerService.sendMessage(message);
 
         return new ResponseEntity<>(
             new GlobalResponse<>(

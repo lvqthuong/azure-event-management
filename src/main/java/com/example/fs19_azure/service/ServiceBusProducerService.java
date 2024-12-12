@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class ServiceBusClientService {
+public class ServiceBusProducerService {
 
     private final ServiceBusSenderClient senderClient;
 
-    public ServiceBusClientService(
+    public ServiceBusProducerService(
         @Value("${SERVICE_BUS_CONNECTION_STRING}") String serviceBusConnectionString,
         @Value("${SERVICE_BUS_QUEUE_NAME}") String serviceBusQueueName
     ) {
