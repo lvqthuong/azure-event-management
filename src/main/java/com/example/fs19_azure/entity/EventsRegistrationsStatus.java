@@ -1,7 +1,7 @@
 package com.example.fs19_azure.entity;
 
 public enum EventsRegistrationsStatus {
-    REGISTERED,
+    PENDING,
     CONFIRMED,
     CANCELLED
 }
