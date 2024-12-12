@@ -22,6 +22,9 @@ public enum ErrorMessage {
     , EVENT_NOT_FOUND("Event not found")
     , EVENT_UPDATE_FAILED("Event update failed")
 
+    //Event Attachments
+    , FILE_UPLOAD_FAILED("File upload failed")
+
     //Global
     , INVALID_JSON("Invalid JSON")
     ;
