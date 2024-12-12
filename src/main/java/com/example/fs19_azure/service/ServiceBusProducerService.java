@@ -2,6 +2,7 @@ package com.example.fs19_azure.service;
 
 import com.azure.messaging.servicebus.*;
 import com.example.fs19_azure.dto.EventsRegistrationsMessage;
+import com.example.fs19_azure.exceptions.SendMessageProcessingException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +26,13 @@ public class ServiceBusProducerService {
             .buildClient();;
     }
 
-    public void sendMessage(EventsRegistrationsMessage erMessage) throws JsonProcessingException {
-        String message = new ObjectMapper().writeValueAsString(erMessage);
-        System.out.println("Sending message: " + message);
-        senderClient.sendMessage(new ServiceBusMessage(message).setMessageId(UUID.randomUUID().toString()));
+    public void sendMessage(EventsRegistrationsMessage erMessage) {
+        try {
+            String message = new ObjectMapper().writeValueAsString(erMessage);
+            System.out.println("Sending message: " + message);
+            senderClient.sendMessage(new ServiceBusMessage(message).setMessageId(UUID.randomUUID().toString()));
+        } catch (JsonProcessingException e) {
+            throw new SendMessageProcessingException("Failed to create message JSON", e);
+        }
     }
 }
