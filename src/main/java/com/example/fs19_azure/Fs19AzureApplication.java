@@ -1,6 +1,6 @@
 package com.example.fs19_azure;
 
-import com.example.fs19_azure.service.ServiceBusConsumerService;
+import com.example.fs19_azure.service.azure.ServiceBusConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

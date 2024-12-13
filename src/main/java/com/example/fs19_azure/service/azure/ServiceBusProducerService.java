@@ -1,4 +1,4 @@
-package com.example.fs19_azure.service;
+package com.example.fs19_azure.service.azure;
 
 import com.azure.messaging.servicebus.*;
 import com.example.fs19_azure.dto.EventsRegistrationsMessage;

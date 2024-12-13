@@ -1,20 +1,18 @@
-package com.example.fs19_azure.service;
+package com.example.fs19_azure.service.azure;
 
 import com.azure.messaging.servicebus.*;
 import com.example.fs19_azure.dto.EventsRegistrationsMessage;
-import com.example.fs19_azure.entity.Events;
-import com.example.fs19_azure.entity.EventsRegistrations;
+import com.example.fs19_azure.service.EventsRegistrationsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.UUID;
 
 @Service
 public class ServiceBusConsumerService {
+    //TODO: Port the ServiceBusConsumerService to Azure Functions
 
     private EventsRegistrationsService eventsRegistrationsService;
 

@@ -20,9 +20,8 @@ public class EventsAttachments {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
-    private Events event;
+    @Column(nullable = false)
+    private UUID eventId;
 
     @Column(nullable = false)
     private String blob_url;
