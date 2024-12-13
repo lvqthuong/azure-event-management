@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface EventsRegistrationsRepository extends JpaRepository<EventsRegistrations, UUID> {
-    Optional<EventsRegistrations> findByEventIdAndUserIdAndStatusIs(UUID eventId, UUID userId, String status);
+    Optional<EventsRegistrations> findByEventIdAndUserIdAndStatus(UUID eventId, UUID userId, String status);
 }

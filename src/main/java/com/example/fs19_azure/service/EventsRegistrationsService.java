@@ -46,7 +46,7 @@ public class EventsRegistrationsService {
 
         //create the registration record, status is PENDING
         EventsRegistrations eventsRegistrations = new EventsRegistrations().builder()
-            .event(event)
+            .eventId(eventId)
             .userId(userId)
             .status(EventsRegistrationsStatus.PENDING.name())
             .build();
@@ -61,7 +61,7 @@ public class EventsRegistrationsService {
 
         //check if the pending registration exists
         Optional<EventsRegistrations> eventsRegistrations = eventsRegistrationsRepository
-            .findByEventIdAndUserIdAndStatusIs(
+            .findByEventIdAndUserIdAndStatus(
                 eventId
                 , userId
                 , EventsRegistrationsStatus.PENDING.name());

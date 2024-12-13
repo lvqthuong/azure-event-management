@@ -5,6 +5,7 @@ import com.example.fs19_azure.dto.EventsRegistrationsMessage;
 import com.example.fs19_azure.service.EventsRegistrationsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class ServiceBusConsumerService {
     //TODO: Port the ServiceBusConsumerService to Azure Functions
 
+    @Autowired
     private EventsRegistrationsService eventsRegistrationsService;
 
     private ServiceBusProcessorClient processorClient;
@@ -29,8 +31,6 @@ public class ServiceBusConsumerService {
             .processMessage(this::processMessage)
             .processError(this::processError)
             .buildProcessorClient();
-
-        this.eventsRegistrationsService = new EventsRegistrationsService();
     }
 
     public void startProcessing() {
