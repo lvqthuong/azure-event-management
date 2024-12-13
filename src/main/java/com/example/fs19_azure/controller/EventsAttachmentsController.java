@@ -5,9 +5,12 @@ import com.example.fs19_azure.dto.UploadedAttachment;
 import com.example.fs19_azure.entity.EventsAttachments;
 import com.example.fs19_azure.service.EventsAttachmentsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +28,19 @@ public class EventsAttachmentsController {
     @Autowired
     private EventsAttachmentsService eventsAttachmentsService;
 
-    @Operation(summary = "Upload a file", description = "Upload a file to the server")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "File uploaded successfully"),
-        @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    @PostMapping
+    /*
+        curl -X POST \
+            -F "file=@resource-init.sh" \
+            http://localhost:8080/events/7ff6a1ff-61f1-4c31-a8e9-a3e722b8b80b/attachments
+     */
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
     public ResponseEntity<GlobalResponse<List<UploadedAttachment>>> uploadAttachments(
         @PathVariable UUID id
-        , @RequestParam("file") List<MultipartFile> attachments
+        , @Parameter(
+            description = "List of files to upload"
+            , required = true
+        )
+        @RequestParam("file") List<MultipartFile> attachments
     ) {
         System.out.println("uploadAttachments for event id: " + id);
         return new ResponseEntity<>(

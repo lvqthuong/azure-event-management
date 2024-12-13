@@ -34,9 +34,9 @@ public class BlobStorageService {
 
             String fileUrl = blobContainerClient.getBlobClient(fileName).getBlobUrl();
             return new UploadedAttachment(
-                fileName
+                fileUrl
+                , fileName
                 , file.getContentType()
-                , fileUrl
                 , file.getSize()
             );
 
