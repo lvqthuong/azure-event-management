@@ -8,6 +8,7 @@ import com.example.fs19_azure.exceptions.ErrorMessage;
 import com.example.fs19_azure.exceptions.GlobalException;
 import com.example.fs19_azure.repository.EventsRegistrationsRepository;
 import com.example.fs19_azure.repository.EventsRepository;
+import com.example.fs19_azure.service.azure.ServiceBusProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

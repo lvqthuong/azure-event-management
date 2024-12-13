@@ -88,6 +88,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<GlobalResponse> handleFileUploadException(FileUploadException ex) {
+        return new ResponseEntity<>(
+            new GlobalResponse<>(
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+                , List.of(new GlobalResponse.ErrorItem(ErrorMessage.FILE_UPLOAD_FAILED.getMessage()))
+            )
+            , HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
     @ExceptionHandler(GlobalException.class)
     public ResponseEntity<GlobalResponse> handleApplicationException(GlobalException ex){
         List<GlobalResponse.ErrorItem> errorItems = List.of(new GlobalResponse.ErrorItem(ex.getMessage()));

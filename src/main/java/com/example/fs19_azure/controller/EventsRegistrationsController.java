@@ -3,7 +3,7 @@ package com.example.fs19_azure.controller;
 import com.example.fs19_azure.controller.response.GlobalResponse;
 import com.example.fs19_azure.entity.EventsRegistrations;
 import com.example.fs19_azure.service.EventsRegistrationsService;
-import com.example.fs19_azure.service.ServiceBusProducerService;
+import com.example.fs19_azure.service.azure.ServiceBusProducerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Validated
