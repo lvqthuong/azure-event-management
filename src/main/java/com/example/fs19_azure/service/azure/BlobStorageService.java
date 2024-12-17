@@ -4,6 +4,8 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.example.fs19_azure.dto.UploadedAttachment;
 import com.example.fs19_azure.exceptions.FileUploadException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +15,8 @@ import java.util.UUID;
 
 @Service
 public class BlobStorageService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BlobStorageService.class);
     private final BlobContainerClient blobContainerClient;
 
     public BlobStorageService (
@@ -41,7 +45,7 @@ public class BlobStorageService {
             );
 
         } catch (IOException e) {
-            // Container already exists
+            logger.error("Failed to upload file to blob storage.", e);
             throw new FileUploadException("Failed to upload file to blob storage.", e);
         }
     }

@@ -16,9 +16,3 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create-drop #update
-  azure:
-    activedirectory:
-      client-id: fc037e21-c170-48d2-9aa8-543878aff8b1
-      app-id-uri: api://fc037e21-c170-48d2-9aa8-543878aff8b1
-    application-insights:
-      instrumentation-key: ${APP_INSIGHTS_KEY}

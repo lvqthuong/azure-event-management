@@ -37,7 +37,7 @@ public class EventsRegistrationsService {
 
         //send the registration message to the service bus
         EventsRegistrationsMessage message = new EventsRegistrationsMessage(
-            "00000000-0000-0000-0000-000000000000"
+            userId.toString()
             , eventId.toString()
             , EventsRegistrationsStatus.PENDING.name()
             , Instant.now().toString()

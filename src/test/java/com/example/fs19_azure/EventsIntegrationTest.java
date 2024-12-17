@@ -64,7 +64,6 @@ public class EventsIntegrationTest {
                     , "2021-10-10T10:00:00Z"
                     , userId.toString()
                     , eventMetadata
-                    ,""
                 ))));
         eventId = eventsRepository.findByName("Test Event").get(0).getId();
     }
@@ -99,7 +98,6 @@ public class EventsIntegrationTest {
                         , "2021-10-10T10:00:00Z"
                         , userId.toString()
                         , eventMetadata
-                        ,""
                     ))))
                 .andExpect(status().isCreated())
                 .andDo(print());
@@ -119,7 +117,6 @@ public class EventsIntegrationTest {
                         , "2021-10-10T10:00:00Z"
                         , userId.toString()
                         , eventMetadata
-                        ,""
                     ))))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
@@ -139,7 +136,6 @@ public class EventsIntegrationTest {
                             , "2021-10-10T10:00:00Z"
                             , userId.toString()
                             , eventMetadata
-                            ,""
                         ))))
                 .andExpect(status().isBadRequest())
                 .andDo(print());

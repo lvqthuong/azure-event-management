@@ -1,6 +1,9 @@
 package com.example.fs19_azure.service.azure;
 
 import com.azure.messaging.servicebus.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.fs19_azure.dto.EventsRegistrationsMessage;
 import com.example.fs19_azure.service.EventsRegistrationsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +17,8 @@ import java.util.UUID;
 @Service
 public class ServiceBusConsumerService {
     //TODO: Port the ServiceBusConsumerService to Azure Functions
+
+    private static final Logger logger = LoggerFactory.getLogger(ServiceBusConsumerService.class);
 
     @Autowired
     private EventsRegistrationsService eventsRegistrationsService;
@@ -43,32 +48,33 @@ public class ServiceBusConsumerService {
     }
 
     private void processMessage(ServiceBusReceivedMessageContext context) {
-        ServiceBusReceivedMessage message = context.getMessage();
-        System.out.printf("Received message: %s%n", message.getBody().toString());
-
-        EventsRegistrationsMessage erMessage;
-        try {
-            erMessage = new ObjectMapper().readValue(message.getBody().toString(), EventsRegistrationsMessage.class);
-            Boolean result = eventsRegistrationsService.confirmRegistration(
-                UUID.fromString(erMessage.eventId())
-                , UUID.fromString(erMessage.userId())
-            );
-
-            // Mark the message as completed
-            if (result != false) {
-                System.out.println("Message processed successfully.");
-                context.complete();
-            } else {
-                System.out.println("Message processing failed.");
-                context.abandon();
-            }
-        } catch (JsonProcessingException e) {
-            System.err.printf("Error occurred while processing message: %s%n", e.getMessage());
-            context.abandon();
-        }
+//        ServiceBusReceivedMessage message = context.getMessage();
+//        System.out.printf("Received message: %s%n", message.getBody().toString());
+//
+//        EventsRegistrationsMessage erMessage;
+//        try {
+//            erMessage = new ObjectMapper().readValue(message.getBody().toString(), EventsRegistrationsMessage.class);
+//            Boolean result = eventsRegistrationsService.confirmRegistration(
+//                UUID.fromString(erMessage.eventId())
+//                , UUID.fromString(erMessage.userId())
+//            );
+//
+//            // Mark the message as completed
+//            if (result != false) {
+//                System.out.println("Message processed successfully.");
+//                context.complete();
+//            } else {
+//                logger.error("Error occurred confirming registration for user: {} and event: {}", erMessage.userId(), erMessage.eventId());
+//                context.abandon();
+//            }
+//        } catch (JsonProcessingException e) {
+//            logger.error("Error occurred while parsing JSON message: {}", e.getMessage());
+//            context.abandon();
+//        }
+        context.abandon();
     }
 
     private void processError(ServiceBusErrorContext context) {
-        System.err.printf("Error occurred while processing message: %s%n", context.getException().getMessage());
+        logger.error("Error occurred while processing message: {}", context.getException().getMessage());
     }
 }
