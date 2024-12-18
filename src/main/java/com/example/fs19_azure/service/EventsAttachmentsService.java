@@ -17,10 +17,7 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class EventsAttachmentsService {
@@ -92,12 +89,18 @@ public class EventsAttachmentsService {
         }
     }
 
-    public boolean deleteEventAttachment(UUID attachmentId) {
-        EventsAttachments attachment = eventsAttachmentsRepository.findById(attachmentId)
-            .orElseThrow(() -> new AttachmentNotFoundException("Attachment not found with id: " + attachmentId, null));
+    public boolean deleteEventAttachment(UUID eventId, UUID attachmentId) {
+
+        Optional<EventsAttachments> attachment = eventsAttachmentsRepository.findByEventIdAndId(eventId, attachmentId);
+        if (attachment.isEmpty()) {
+            throw new AttachmentNotFoundException(
+                "Attachment not found with id: " + attachmentId + " for event: " + eventId
+                , null
+            );
+        }
 
         // Delete the file from the blob storage
-        boolean result = blobStorageService.deleteFile(attachment.getBlob_name());
+        boolean result = blobStorageService.deleteFile(attachment.get().getBlob_name());
 
         if (result) {
             // Delete the file metadata from the database

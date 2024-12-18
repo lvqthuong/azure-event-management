@@ -48,12 +48,13 @@ public class EventsAttachmentsController {
 
     @DeleteMapping("/{attachmentId}")
     public ResponseEntity<GlobalResponse<Boolean>> deleteAttachment(
-        @PathVariable UUID attachmentId
+        @PathVariable UUID id
+        , @PathVariable UUID attachmentId
     ) {
         return new ResponseEntity<>(
             new GlobalResponse<>(
                 HttpStatus.OK.value()
-                , eventsAttachmentsService.deleteEventAttachment(attachmentId)
+                , eventsAttachmentsService.deleteEventAttachment(id, attachmentId)
             )
             , HttpStatus.OK
         );
