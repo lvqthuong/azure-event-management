@@ -2,14 +2,8 @@ package com.example.fs19_azure.controller;
 
 import com.example.fs19_azure.controller.response.GlobalResponse;
 import com.example.fs19_azure.dto.UploadedAttachment;
-import com.example.fs19_azure.entity.EventsAttachments;
 import com.example.fs19_azure.service.EventsAttachmentsService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,6 +43,19 @@ public class EventsAttachmentsController {
                 eventsAttachmentsService.uploadEventAttachments(id, attachments)
             )
             , HttpStatus.CREATED
+        );
+    }
+
+    @DeleteMapping("/{attachmentId}")
+    public ResponseEntity<GlobalResponse<Boolean>> deleteAttachment(
+        @PathVariable UUID attachmentId
+    ) {
+        return new ResponseEntity<>(
+            new GlobalResponse<>(
+                HttpStatus.OK.value()
+                , eventsAttachmentsService.deleteEventAttachment(attachmentId)
+            )
+            , HttpStatus.OK
         );
     }
 }

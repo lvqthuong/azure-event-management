@@ -1,7 +1,9 @@
 package com.example.fs19_azure.service;
 
+import com.example.fs19_azure.controller.response.GlobalResponse;
 import com.example.fs19_azure.dto.UploadedAttachment;
 import com.example.fs19_azure.entity.EventsAttachments;
+import com.example.fs19_azure.exceptions.AttachmentNotFoundException;
 import com.example.fs19_azure.exceptions.FileUploadException;
 import com.example.fs19_azure.repository.EventsAttachmentsRepository;
 import com.example.fs19_azure.service.azure.BlobStorageService;
@@ -88,5 +90,20 @@ public class EventsAttachmentsService {
                 .build();
             eventsAttachmentsRepository.save(attachment);
         }
+    }
+
+    public boolean deleteEventAttachment(UUID attachmentId) {
+        EventsAttachments attachment = eventsAttachmentsRepository.findById(attachmentId)
+            .orElseThrow(() -> new AttachmentNotFoundException("Attachment not found with id: " + attachmentId, null));
+
+        // Delete the file from the blob storage
+        boolean result = blobStorageService.deleteFile(attachment.getBlob_name());
+
+        if (result) {
+            // Delete the file metadata from the database
+            eventsAttachmentsRepository.deleteById(attachmentId);
+        }
+
+        return result;
     }
 }

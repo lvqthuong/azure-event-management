@@ -1,5 +1,6 @@
 package com.example.fs19_azure.exceptions;
 
+import com.azure.storage.blob.models.BlobStorageException;
 import com.example.fs19_azure.controller.response.GlobalResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -94,6 +95,17 @@ public class GlobalExceptionHandler {
             new GlobalResponse<>(
                 HttpStatus.INTERNAL_SERVER_ERROR.value()
                 , List.of(new GlobalResponse.ErrorItem(ErrorMessage.FILE_UPLOAD_FAILED.getMessage()))
+            )
+            , HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    @ExceptionHandler(BlobStorageException.class)
+    public ResponseEntity<GlobalResponse> handleBlobStorageException(BlobStorageException ex) {
+        return new ResponseEntity<>(
+            new GlobalResponse<>(
+                ex.getStatusCode()
+                , List.of(ex.getMessage())
             )
             , HttpStatus.INTERNAL_SERVER_ERROR
         );

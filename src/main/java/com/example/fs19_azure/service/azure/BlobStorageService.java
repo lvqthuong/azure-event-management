@@ -1,8 +1,11 @@
 package com.example.fs19_azure.service.azure;
 
+import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
+import com.azure.storage.blob.models.BlobStorageException;
 import com.example.fs19_azure.dto.UploadedAttachment;
+import com.example.fs19_azure.exceptions.AttachmentNotFoundException;
 import com.example.fs19_azure.exceptions.FileUploadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +52,26 @@ public class BlobStorageService {
         } catch (IOException e) {
             logger.error("Failed to upload file to blob storage.", e);
             throw new FileUploadException("Failed to upload file to blob storage.", e);
+        }
+    }
+
+    public boolean deleteFile(String blobName) {
+        try {
+            // Get the BlobClient for the specified blob
+            BlobClient blobClient = blobContainerClient.getBlobClient(blobName);
+
+            // Delete the blob
+            blobClient.delete();
+            System.out.println("Blob deleted successfully: " + blobName);
+            return true;
+        } catch (BlobStorageException e) {
+            // Handle cases where the blob does not exist or other errors
+            if (e.getStatusCode() == 404) {
+                throw new AttachmentNotFoundException("Attachment not found: " + blobName, e);
+            } else {
+                System.out.println("Error deleting blob: " + e.getMessage());
+                throw e;
+            }
         }
     }
 }
