@@ -4,6 +4,7 @@ import com.example.fs19_azure.controller.response.GlobalResponse;
 import com.example.fs19_azure.dto.EventsCreate;
 import com.example.fs19_azure.dto.EventsRead;
 import com.example.fs19_azure.dto.EventsUpdate;
+import com.example.fs19_azure.dto.EventsWithAttachments;
 import com.example.fs19_azure.entity.Events;
 import com.example.fs19_azure.service.EventsService;
 import jakarta.validation.Valid;
@@ -46,7 +47,7 @@ public class EventsController {
     }
 
     @GetMapping
-    public ResponseEntity<GlobalResponse<List<EventsRead>>> getActiveEvents() {
+    public ResponseEntity<GlobalResponse<List<EventsWithAttachments>>> getActiveEvents() {
         return new ResponseEntity<>(
             new GlobalResponse<>(
                 HttpStatus.OK.value()

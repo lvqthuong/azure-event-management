@@ -30,8 +30,19 @@ public class EventsAttachmentsService {
 
     private final int MAX_FILE_SIZE = 1024*1024*2; // 2MB
 
-    public List<EventsAttachments> getAttachmentsOfEvent(UUID eventId) {
-        return eventsAttachmentsRepository.findByEventId(eventId);
+    public List<UploadedAttachment> getAttachmentsOfEvent(UUID eventId) {
+        List<EventsAttachments> attachments = eventsAttachmentsRepository.findByEventId(eventId);
+        List<UploadedAttachment> uploadedAttachments = new ArrayList<>();
+        for (EventsAttachments attachment : attachments) {
+            uploadedAttachments.add(new UploadedAttachment(
+                attachment.getId().toString()
+                , attachment.getBlob_url()
+                , attachment.getBlob_name()
+                , attachment.getBlob_type()
+                , attachment.getBlob_size()
+            ));
+        }
+        return uploadedAttachments;
     }
 
     public List<UploadedAttachment> uploadEventAttachments(UUID eventId, List<MultipartFile> files) {
@@ -44,16 +55,23 @@ public class EventsAttachmentsService {
             UploadedAttachment uploadedFile = blobStorageService.uploadFileForEvent(eventId.toString(), file);
 
             // Save the file metadata to the database
-            EventsAttachments attachment = EventsAttachments.builder()
+            EventsAttachments attachment = eventsAttachmentsRepository.save(EventsAttachments.builder()
                 .eventId(eventId)
                 .blob_name(uploadedFile.blobName())
                 .blob_type(uploadedFile.blobType())
                 .blob_url(uploadedFile.blobUrl())
                 .blob_size(uploadedFile.blobSize())
-                .build();
-            eventsAttachmentsRepository.save(attachment);
+                .build());
 
-            uploadedAttachments.add(uploadedFile);
+            UploadedAttachment uploadFileWithId = new UploadedAttachment(
+                attachment.getId().toString()
+                , uploadedFile.blobUrl()
+                , uploadedFile.blobName()
+                , uploadedFile.blobType()
+                , uploadedFile.blobSize()
+            );
+
+            uploadedAttachments.add(uploadFileWithId);
         }
         return uploadedAttachments;
     }

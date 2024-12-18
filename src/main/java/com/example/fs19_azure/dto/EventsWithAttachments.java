@@ -13,7 +13,7 @@ public record EventsWithAttachments(
     String startDate,
     String endDate,
     String organizer,
-    List<EventsAttachments> attachments,
+    List<UploadedAttachment> attachments,
     String metadata,
     String updatedAt,
     String createdAt

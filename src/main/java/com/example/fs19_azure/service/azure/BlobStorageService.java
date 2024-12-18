@@ -32,13 +32,15 @@ public class BlobStorageService {
 
     public UploadedAttachment uploadFileForEvent(String eventId, MultipartFile file) {
         try {
-            String fileName = eventId + "_" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            UUID uuid = UUID.randomUUID();
+            String fileName = eventId + "_" + uuid + "_" + file.getOriginalFilename();
             blobContainerClient.getBlobClient(fileName)
                 .upload(file.getInputStream(), file.getSize(), true);
 
             String fileUrl = blobContainerClient.getBlobClient(fileName).getBlobUrl();
             return new UploadedAttachment(
-                fileUrl
+                uuid.toString()
+                , fileUrl
                 , fileName
                 , file.getContentType()
                 , file.getSize()
