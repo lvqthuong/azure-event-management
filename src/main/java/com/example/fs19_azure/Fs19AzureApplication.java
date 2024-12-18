@@ -18,7 +18,6 @@ public class Fs19AzureApplication {
 	private static final Logger logger = LoggerFactory.getLogger(Fs19AzureApplication.class);
 
 	public static void main(String[] args) {
-//		ApplicationInsights.attach();
 		logger.info("Starting the application");
 		SpringApplication.run(Fs19AzureApplication.class, args);
 	}
