@@ -1,8 +1,6 @@
 package com.example.fs19_azure.service;
 
-import com.example.fs19_azure.dto.EventsCreate;
-import com.example.fs19_azure.dto.EventsRead;
-import com.example.fs19_azure.dto.EventsUpdate;
+import com.example.fs19_azure.dto.*;
 import com.example.fs19_azure.dto.mapper.EventsMapper;
 import com.example.fs19_azure.entity.Events;
 import com.example.fs19_azure.entity.Users;
@@ -20,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +30,9 @@ public class EventsService {
 
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private EventsAttachmentsService eventsAttachmentsService;
 
     private static final Logger logger = LoggerFactory.getLogger(EventsService.class);
 
@@ -69,10 +71,14 @@ public class EventsService {
         return EventsMapper.toEventsRead(event.get());
     }
 
-    public List<EventsRead> getAllActiveEvents() {
+    public List<EventsWithAttachments> getAllActiveEvents() {
         List<Events> list = eventsRepository.findByDeletedFalse();
-        System.out.println("Events: " + list.size());
-        return list.stream().map(EventsMapper::toEventsRead).toList();
+        List<EventsWithAttachments> eventsWithAttachments = new ArrayList<>();
+        for (Events event : list) {
+            List<UploadedAttachment> attachments = eventsAttachmentsService.getAttachmentsOfEvent(event.getId());
+            eventsWithAttachments.add(EventsMapper.toEventsWithAttachments(event, attachments));
+        }
+        return eventsWithAttachments;
     }
 
     @Transactional
