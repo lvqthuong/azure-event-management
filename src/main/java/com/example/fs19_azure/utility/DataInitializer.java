@@ -41,15 +41,15 @@ public class DataInitializer {
     }
 
     private void initUsers() {
+        UUID newUserId = UUID.randomUUID();
         Users user = usersRepository.save(
             Users.builder()
-//                    .id(UUID.fromString("00000000-0000-0000-0000-000000000000"))
-                .email("test@fs19java.com")
-                .name("Test User")
+                .email(newUserId + "-test@fs19java.com")
+                .name("Test User-" + newUserId)
                 .password("password")
                 .build()
         );
-        userId = usersRepository.findByEmail("test@fs19java.com").getId();
+        userId = usersRepository.findByEmail(newUserId + "-test@fs19java.com").getId();
         logger.info("User created: {}", userId);
     }
 

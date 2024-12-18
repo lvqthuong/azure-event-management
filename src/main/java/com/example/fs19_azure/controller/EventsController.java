@@ -2,11 +2,10 @@ package com.example.fs19_azure.controller;
 
 import com.example.fs19_azure.controller.response.GlobalResponse;
 import com.example.fs19_azure.dto.EventsCreate;
-import com.example.fs19_azure.dto.EventsRead;
 import com.example.fs19_azure.dto.EventsUpdate;
 import com.example.fs19_azure.dto.EventsWithAttachments;
-import com.example.fs19_azure.entity.Events;
 import com.example.fs19_azure.service.EventsService;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class EventsController {
     private EventsService eventsService;
 
     @PostMapping("/create")
-    public ResponseEntity<GlobalResponse<Events>> createEvent(@RequestBody @Valid EventsCreate dto) {
+    public ResponseEntity<GlobalResponse<EventsWithAttachments>> createEvent(@RequestBody @Valid EventsCreate dto) {
         return new ResponseEntity<>(
             new GlobalResponse<>(
                 HttpStatus.CREATED.value()
@@ -36,7 +35,7 @@ public class EventsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GlobalResponse<EventsRead>> getEvent(@PathVariable UUID id) {
+    public ResponseEntity<GlobalResponse<EventsWithAttachments>> getEvent(@PathVariable UUID id) {
         return new ResponseEntity<>(
             new GlobalResponse<>(
                 HttpStatus.OK.value()
@@ -58,7 +57,7 @@ public class EventsController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<GlobalResponse<EventsRead>> updateEvent(@PathVariable UUID id, @RequestBody @Valid EventsUpdate dto) {
+    public ResponseEntity<GlobalResponse<EventsWithAttachments>> updateEvent(@PathVariable UUID id, @RequestBody @Valid EventsUpdate dto) {
         return new ResponseEntity<>(
             new GlobalResponse<>(
                 HttpStatus.OK.value()
