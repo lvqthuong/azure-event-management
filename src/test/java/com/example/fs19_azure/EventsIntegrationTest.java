@@ -75,9 +75,6 @@ public class EventsIntegrationTest {
             mockMvc.perform(get("/events"))
                 .andExpect(status().isOk())
                 .andDo(print());
-//                    .andExpect(jsonPath("$", hasSize(1)))
-//                    .andExpect(jsonPath("$[0].name", is("John Doe")))
-//                    .andExpect(jsonPath("$[0].email", is("
         }
     }
 
