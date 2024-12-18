@@ -26,13 +26,16 @@ public class UsersIntegrationTest {
     @Autowired
     MockMvc mockMvc;
 
+    String existingUUID = UUID.randomUUID().toString();
+
     @BeforeEach
     void setUp() throws Exception {
+        String email = "test-user-" + existingUUID + "@fs19java.com";
         mockMvc.perform(post("/users")
             .contentType("application/json")
             .content(new ObjectMapper().writeValueAsString(
                 new UsersCreate(
-                    "test-user@fs19java.com"
+                    email
                     , "password"
                     , "User Test"
                 ))));
@@ -55,11 +58,12 @@ public class UsersIntegrationTest {
     class PostUsersTest {
         @Test
         void shouldBeAbleToCreateUser() throws Exception {
+            String email = "new-user-" + UUID.randomUUID() + "@fs19java.com";
             mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(new ObjectMapper().writeValueAsString(
                     new UsersCreate(
-                        "new-user@fs19java.com"
+                        email
                         , "password"
                         , "New User"
                     ))))
@@ -76,7 +80,7 @@ public class UsersIntegrationTest {
                     .contentType("application/json")
                     .content(new ObjectMapper().writeValueAsString(
                         new UsersCreate(
-                            "test-user@fs19java.com"
+                            "test-user-" + existingUUID + "@fs19java.com"
                             , "password"
                             , "User Test"
                         ))))

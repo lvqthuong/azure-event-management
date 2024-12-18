@@ -1,11 +1,11 @@
 package com.example.fs19_azure.caching;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -25,9 +25,14 @@ public class RedisConfig {
 
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(
             REDIS_CACHE_HOSTNAME
-            , 6379);
+            , 6380);
         config.setPassword(REDIS_CACHE_PRIMARY_KEY);
-        return new LettuceConnectionFactory(config);
+
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+            .useSsl() // Enable SSL
+            .build();
+
+        return new LettuceConnectionFactory(config, clientConfig);
     }
 
     @Bean
