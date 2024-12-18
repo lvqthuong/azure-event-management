@@ -109,9 +109,7 @@ public class EventsService {
         // Retrieve values for each key
         List<EventsWithAttachments> events = new ArrayList<>();
         if (keys.stream().count() > 0) {
-            System.out.println("Cache hit: " +  keys.stream().count() + " found!");
             for (String key : keys) {
-                System.out.println("Key: " + key);
                 EventsWithAttachments event = (EventsWithAttachments) redisTemplate.opsForValue().get(key);
                 if (event != null) {
                     events.add(event);
@@ -121,7 +119,6 @@ public class EventsService {
         }
 
         //if cache miss, fetch from database
-        System.out.println("Cache miss");
         List<Events> list = eventsRepository.findByDeletedFalse();
         List<EventsWithAttachments> eventsWithAttachments = new ArrayList<>();
 
