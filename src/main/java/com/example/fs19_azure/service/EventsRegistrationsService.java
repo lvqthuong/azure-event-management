@@ -37,7 +37,7 @@ public class EventsRegistrationsService {
 
         //send the registration message to the service bus
         EventsRegistrationsMessage message = new EventsRegistrationsMessage(
-            "00000000-0000-0000-0000-000000000000"
+            userId.toString()
             , eventId.toString()
             , EventsRegistrationsStatus.PENDING.name()
             , Instant.now().toString()
@@ -46,7 +46,7 @@ public class EventsRegistrationsService {
 
         //create the registration record, status is PENDING
         EventsRegistrations eventsRegistrations = new EventsRegistrations().builder()
-            .event(event)
+            .eventId(eventId)
             .userId(userId)
             .status(EventsRegistrationsStatus.PENDING.name())
             .build();
@@ -61,7 +61,7 @@ public class EventsRegistrationsService {
 
         //check if the pending registration exists
         Optional<EventsRegistrations> eventsRegistrations = eventsRegistrationsRepository
-            .findByEventIdAndUserIdAndStatusIs(
+            .findByEventIdAndUserIdAndStatus(
                 eventId
                 , userId
                 , EventsRegistrationsStatus.PENDING.name());

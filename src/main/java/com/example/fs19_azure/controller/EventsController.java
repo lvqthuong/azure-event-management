@@ -35,7 +35,7 @@ public class EventsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GlobalResponse<Events>> getEvent(@PathVariable UUID id) {
+    public ResponseEntity<GlobalResponse<EventsRead>> getEvent(@PathVariable UUID id) {
         return new ResponseEntity<>(
             new GlobalResponse<>(
                 HttpStatus.OK.value()
@@ -46,7 +46,7 @@ public class EventsController {
     }
 
     @GetMapping
-    public ResponseEntity<GlobalResponse<List<Events>>> getActiveEvents() {
+    public ResponseEntity<GlobalResponse<List<EventsRead>>> getActiveEvents() {
         return new ResponseEntity<>(
             new GlobalResponse<>(
                 HttpStatus.OK.value()

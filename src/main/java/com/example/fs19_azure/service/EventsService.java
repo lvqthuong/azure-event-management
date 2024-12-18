@@ -10,8 +10,11 @@ import com.example.fs19_azure.exceptions.ErrorMessage;
 import com.example.fs19_azure.exceptions.GlobalException;
 import com.example.fs19_azure.repository.EventsRepository;
 import com.example.fs19_azure.repository.UsersRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,8 @@ public class EventsService {
 
     @Autowired
     private UsersRepository usersRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(EventsService.class);
 
     public Events createEvent(EventsCreate dto) {
         //fetch the organizer
@@ -51,15 +56,23 @@ public class EventsService {
             throw new GlobalException(HttpStatus.BAD_REQUEST, ErrorMessage.EVENT_CREATION_FAILED);
         }
 
+        logger.info("Event created: {}", event.getId());
         return event;
     }
 
-    public Events getEvent(UUID id) {
-        return eventsRepository.findById(id).orElse(null);
+    public EventsRead getEvent(UUID id) {
+        Optional<Events> event = eventsRepository.findById(id);
+        if (event.isEmpty()) {
+            throw new GlobalException(HttpStatus.NOT_FOUND, ErrorMessage.EVENT_NOT_FOUND);
+        }
+        //convert to read DTO
+        return EventsMapper.toEventsRead(event.get());
     }
 
-    public List<Events> getAllActiveEvents() {
-        return eventsRepository.findByDeletedFalse();
+    public List<EventsRead> getAllActiveEvents() {
+        List<Events> list = eventsRepository.findByDeletedFalse();
+        System.out.println("Events: " + list.size());
+        return list.stream().map(EventsMapper::toEventsRead).toList();
     }
 
     @Transactional

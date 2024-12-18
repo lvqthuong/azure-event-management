@@ -20,16 +20,24 @@ public class EventsRegistrations {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+
+
+
+/*
+ *  Remove the relationship with the Users & Events entity
+ *
+ *
+ *  @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Events event;
-/*
- *  Remove the relationship with the Users entity
- *
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 */
+    @Column(nullable = false)
+    private UUID eventId;
+
     @Column(nullable = false)
     private UUID userId;
 

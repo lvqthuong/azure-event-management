@@ -1,5 +1,6 @@
 package com.example.fs19_azure.dto;
 
+import com.example.fs19_azure.dto.json_validator.ValidJson;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 
@@ -25,6 +26,7 @@ public record EventsCreate(
         @NotBlank(message = "must not be empty or whitespace")
         String organizerId,
 
+        @ValidJson
         String metadata
 ) {
 }
