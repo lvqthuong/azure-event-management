@@ -3,7 +3,10 @@ package com.example.fs19_azure.utility;
 import com.example.fs19_azure.entity.Events;
 import com.example.fs19_azure.entity.Users;
 import com.example.fs19_azure.repository.EventsRepository;
+import com.example.fs19_azure.service.EventsService;
 import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +28,8 @@ public class DataInitializer {
     @Autowired
     private EventsRepository eventsRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
+
     private UUID userId;
 
     @Bean
@@ -45,7 +50,7 @@ public class DataInitializer {
                 .build()
         );
         userId = usersRepository.findByEmail("test@fs19java.com").getId();
-        System.out.println("User created: " + userId);
+        logger.info("User created: {}", userId);
     }
 
     private void initEvents() {
@@ -61,7 +66,7 @@ public class DataInitializer {
                 .metadata("{ \"key\": \"value\" }")
                 .build());
 
-        System.out.println("Event created: " + event.getId());
+        logger.info("Event created: {}", event.getId());
     }
 
 

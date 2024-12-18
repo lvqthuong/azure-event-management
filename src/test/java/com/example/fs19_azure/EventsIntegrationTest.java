@@ -64,7 +64,6 @@ public class EventsIntegrationTest {
                     , "2021-10-10T10:00:00Z"
                     , userId.toString()
                     , eventMetadata
-                    ,""
                 ))));
         eventId = eventsRepository.findByName("Test Event").get(0).getId();
     }
@@ -76,9 +75,6 @@ public class EventsIntegrationTest {
             mockMvc.perform(get("/events"))
                 .andExpect(status().isOk())
                 .andDo(print());
-//                    .andExpect(jsonPath("$", hasSize(1)))
-//                    .andExpect(jsonPath("$[0].name", is("John Doe")))
-//                    .andExpect(jsonPath("$[0].email", is("
         }
     }
 
@@ -99,7 +95,6 @@ public class EventsIntegrationTest {
                         , "2021-10-10T10:00:00Z"
                         , userId.toString()
                         , eventMetadata
-                        ,""
                     ))))
                 .andExpect(status().isCreated())
                 .andDo(print());
@@ -119,7 +114,6 @@ public class EventsIntegrationTest {
                         , "2021-10-10T10:00:00Z"
                         , userId.toString()
                         , eventMetadata
-                        ,""
                     ))))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
@@ -139,7 +133,6 @@ public class EventsIntegrationTest {
                             , "2021-10-10T10:00:00Z"
                             , userId.toString()
                             , eventMetadata
-                            ,""
                         ))))
                 .andExpect(status().isBadRequest())
                 .andDo(print());

@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping("/events/{id}/register")
+@RequestMapping("/events/{id}")
 public class EventsRegistrationsController {
 
     @Autowired
@@ -27,18 +27,37 @@ public class EventsRegistrationsController {
     @Autowired
     private ServiceBusProducerService serviceBusProducerService;
 
-    @PostMapping
-    public ResponseEntity<GlobalResponse<EventsRegistrations>> register(@Valid @PathVariable UUID id) {
+    @PostMapping("/register/{userId}")
+    public ResponseEntity<GlobalResponse<EventsRegistrations>> register(
+        @Valid @PathVariable UUID id
+        , @Valid @PathVariable UUID userId
+    ) {
         return new ResponseEntity<>(
             new GlobalResponse<>(
                 HttpStatus.OK.value()
                 , eventsRegistrationsService.registerUser(
                     id
-                    , UUID.fromString("00000000-0000-0000-0000-000000000000")
+                    , userId
                 )
             )
             , HttpStatus.OK
         );
     }
 
+    @PostMapping("/confirm/{userId}")
+    public ResponseEntity<GlobalResponse<Boolean>> confirmRegistration(
+        @Valid @PathVariable UUID id
+        , @Valid @PathVariable UUID userId
+    ) {
+        return new ResponseEntity<>(
+            new GlobalResponse<>(
+                HttpStatus.OK.value()
+                , eventsRegistrationsService.confirmRegistration(
+                    id
+                    , userId
+                )
+            )
+            , HttpStatus.OK
+        );
+    }
 }
