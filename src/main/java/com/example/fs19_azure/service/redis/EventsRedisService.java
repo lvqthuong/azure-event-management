@@ -2,6 +2,8 @@ package com.example.fs19_azure.service.redis;
 
 import com.example.fs19_azure.dto.EventsWithAttachments;
 import com.example.fs19_azure.dto.UploadedAttachment;
+import com.example.fs19_azure.service.EventsAttachmentsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -9,6 +11,7 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,6 +21,9 @@ public class EventsRedisService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     private static final String EVENT_CACHE_KEY_PREFIX = "event:";
+
+    @Autowired
+    private EventsAttachmentsRedisService attachmentsCachingService;
 
     public EventsRedisService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -50,6 +56,26 @@ public class EventsRedisService {
         while (cursor != null && cursor.hasNext()) {
             String currentKey = new String(cursor.next());
             EventsWithAttachments event = (EventsWithAttachments) redisTemplate.opsForValue().get(currentKey);
+
+            //get attachments for event
+            List<UploadedAttachment> attachments = attachmentsCachingService
+                .getAttachmentsForEvent(currentKey.split(":")[1]);
+
+            EventsWithAttachments eventsWithAttachments = new EventsWithAttachments(
+                event.id(),
+                event.type(),
+                event.name(),
+                event.description(),
+                event.location(),
+                event.startDate(),
+                event.endDate(),
+                event.organizer(),
+                attachments,
+                event.metadata(),
+                event.updatedAt(),
+                event.createdAt()
+            );
+
             events.add(event);
         }
 

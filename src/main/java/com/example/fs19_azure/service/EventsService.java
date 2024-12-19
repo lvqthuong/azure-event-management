@@ -102,7 +102,7 @@ public class EventsService {
         List<EventsWithAttachments> eventsFromCache = eventsCachingService.getAllEvents();
 
         // cache hit
-        if (eventsFromCache != null) {
+        if (eventsFromCache.size() > 0) {
             return eventsFromCache;
         }
 
