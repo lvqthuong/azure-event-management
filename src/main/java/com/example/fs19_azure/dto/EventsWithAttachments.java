@@ -1,7 +1,5 @@
 package com.example.fs19_azure.dto;
 
-import com.example.fs19_azure.entity.EventsAttachments;
-
 import java.util.List;
 
 public record EventsWithAttachments(

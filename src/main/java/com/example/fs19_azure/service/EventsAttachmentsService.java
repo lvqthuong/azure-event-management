@@ -33,7 +33,7 @@ public class EventsAttachmentsService {
         List<UploadedAttachment> attachments = attachmentCachingService.getAttachmentsForEvent(eventId.toString());
 
         //cache hit -> return
-        if (attachments != null) {
+        if (attachments.size() > 0) {
             System.out.println("Attachment cache hit");
             return attachments;
         }
