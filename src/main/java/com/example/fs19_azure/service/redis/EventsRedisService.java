@@ -1,49 +1,56 @@
 package com.example.fs19_azure.service.redis;
 
 import com.example.fs19_azure.dto.EventsWithAttachments;
-import com.example.fs19_azure.dto.UploadedAttachment;
-import com.example.fs19_azure.service.EventsAttachmentsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.fs19_azure.exceptions.GlobalException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class EventsRedisService {
     private final RedisTemplate<String, Object> redisTemplate;
 
-    private static final String EVENT_CACHE_KEY_PREFIX = "event:";
-
-    @Autowired
-    private EventsAttachmentsRedisService attachmentsCachingService;
+    private static final String EVENT_CACHE_KEY_PREFIX = "events:";
 
     public EventsRedisService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
     //get single event
-    public EventsWithAttachments getEvent(String eventId) {
+    public EventsWithAttachments getEvent(String eventId){
         String key = EVENT_CACHE_KEY_PREFIX + eventId;
-        return (EventsWithAttachments) redisTemplate.opsForValue().get(key);
+        String cachedEvent = (String) redisTemplate.opsForValue().get(key);
+
+        try {
+            return new ObjectMapper().readValue(cachedEvent, EventsWithAttachments.class);
+        } catch (IOException e) {
+            throw new GlobalException("Failed to parse cached event for ID: " + eventId);
+        }
     }
 
     //save event
     public void saveEvent(String eventId, EventsWithAttachments event) {
         String key = EVENT_CACHE_KEY_PREFIX + eventId;
-        redisTemplate.opsForValue().set(key, event);
+
+        try {
+            String ec = new ObjectMapper().writeValueAsString(event);
+            redisTemplate.opsForValue().set(key, ec);
+        } catch (JsonProcessingException e) {
+            throw new GlobalException("Failed to write event as Json for ID: " + eventId);
+        }
     }
 
     //get all events for an event
     public List<EventsWithAttachments> getAllEvents() {
-        String keyPattern = EVENT_CACHE_KEY_PREFIX;
+        String keyPattern = EVENT_CACHE_KEY_PREFIX + "*";
         List<EventsWithAttachments> events = new ArrayList<>();
 
         ScanOptions scanOptions = ScanOptions.scanOptions().match(keyPattern).build();
@@ -55,28 +62,13 @@ public class EventsRedisService {
 
         while (cursor != null && cursor.hasNext()) {
             String currentKey = new String(cursor.next());
-            EventsWithAttachments event = (EventsWithAttachments) redisTemplate.opsForValue().get(currentKey);
-
-            //get attachments for event
-            List<UploadedAttachment> attachments = attachmentsCachingService
-                .getAttachmentsForEvent(currentKey.split(":")[1]);
-
-            EventsWithAttachments eventsWithAttachments = new EventsWithAttachments(
-                event.id(),
-                event.type(),
-                event.name(),
-                event.description(),
-                event.location(),
-                event.startDate(),
-                event.endDate(),
-                event.organizer(),
-                attachments,
-                event.metadata(),
-                event.updatedAt(),
-                event.createdAt()
-            );
-
-            events.add(event);
+            String cachedEvent = (String) redisTemplate.opsForValue().get(currentKey);
+            try {
+                EventsWithAttachments event = new ObjectMapper().readValue(cachedEvent, EventsWithAttachments.class);
+                events.add(event);
+            } catch (IOException e) {
+                throw new GlobalException("Failed to parse cached event for ID: " + currentKey);
+            }
         }
 
         return events;
