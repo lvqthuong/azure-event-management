@@ -87,7 +87,6 @@ public class EventsService {
         // -> retrieve event attachments
         List<UploadedAttachment> attachments = eventsAttachmentsService.getAttachmentsOfEvent(id);
 
-
         // -> convert to DTO
         eventFromCache = EventsMapper.toEventsWithAttachments(event.get(), attachments);
 
@@ -103,6 +102,7 @@ public class EventsService {
 
         // cache hit
         if (eventsFromCache.size() > 0) {
+            System.out.println("Events cache hit, return!");
             return eventsFromCache;
         }
 
@@ -111,9 +111,27 @@ public class EventsService {
         List<EventsWithAttachments> eventsWithAttachments = new ArrayList<>();
 
         for (Events event : eventsFromDB) {
+            //store the event with empty attachments to cache
+            EventsWithAttachments e = EventsMapper.toEventsWithAttachments(event, new ArrayList<>());
+            eventsCachingService.saveEvent(e.id(), e);
+
+            //retrieve the attachments for event
             List<UploadedAttachment> attachments = eventsAttachmentsService.getAttachmentsOfEvent(event.getId());
-            EventsWithAttachments e = EventsMapper.toEventsWithAttachments(event, attachments);
-            eventsWithAttachments.add(e);
+            EventsWithAttachments updatedE = new EventsWithAttachments(
+                e.id(),
+                e.type(),
+                e.name(),
+                e.description(),
+                e.location(),
+                e.startDate(),
+                e.endDate(),
+                e.organizer(),
+                attachments,
+                e.metadata(),
+                e.updatedAt(),
+                e.createdAt()
+            );
+            eventsWithAttachments.add(updatedE);
 
             //store in cache
             eventsCachingService.saveEvent(e.id(), e);

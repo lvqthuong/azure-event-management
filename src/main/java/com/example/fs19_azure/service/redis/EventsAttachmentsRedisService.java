@@ -1,6 +1,8 @@
 package com.example.fs19_azure.service.redis;
 
+import com.example.fs19_azure.dto.EventsWithAttachments;
 import com.example.fs19_azure.dto.UploadedAttachment;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,10 @@ public class EventsAttachmentsRedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final HashOperations<String, String, UploadedAttachment> hashOperations;
 
-    private static final String ATTACHMENTS_KEY_PREFIX = "event:attachments:";
+    private static final String ATTACHMENTS_KEY_PREFIX = "attachments:";
+
+    @Autowired
+    private EventsRedisService eventsCachingService;
 
     public EventsAttachmentsRedisService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -26,7 +31,6 @@ public class EventsAttachmentsRedisService {
         //if the attachments is empty, do nothing
         if (attachments.size() == 0)
         {
-            System.out.println("Empty list of attachments, do nothing!");
             return;
         }
 
@@ -40,6 +44,9 @@ public class EventsAttachmentsRedisService {
             );
         System.out.println("Serialized map: " + attachmentsMap);
         hashOperations.putAll(key, attachmentsMap);
+
+        //update the event cache with the new event
+        refreshEvent(eventId);
     }
 
     //get all attachments for an event
@@ -53,5 +60,31 @@ public class EventsAttachmentsRedisService {
     public void deleteAttachment(String eventId, String attachmentId) {
         String key = ATTACHMENTS_KEY_PREFIX + eventId;
         hashOperations.delete(key, attachmentId);
+        refreshEvent(eventId);
+    }
+
+    //refresh the event cache for new attachments
+    private void refreshEvent(String eventId) {
+        //refresh the event cache with the new event
+        EventsWithAttachments event = eventsCachingService.getEvent(eventId);
+        List<UploadedAttachment> updatedAttachments = getAttachmentsForEvent(eventId);
+        System.out.println("List of attachment has " + updatedAttachments.size() + " items!");
+
+        EventsWithAttachments updatedEvent = new EventsWithAttachments(
+            event.id(),
+            event.type(),
+            event.name(),
+            event.description(),
+            event.location(),
+            event.startDate(),
+            event.endDate(),
+            event.organizer(),
+            updatedAttachments,
+            event.metadata(),
+            event.updatedAt(),
+            event.createdAt()
+        );
+
+        eventsCachingService.saveEvent(eventId, updatedEvent);
     }
 }

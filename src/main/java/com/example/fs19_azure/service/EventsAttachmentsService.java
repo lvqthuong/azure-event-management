@@ -29,7 +29,7 @@ public class EventsAttachmentsService {
     private final int MAX_FILE_SIZE = 1024*1024*2; // 2MB
 
     public List<UploadedAttachment> getAttachmentsOfEvent(UUID eventId) {
-        //get the attachments from cache.deleteAttachment(eventId.toString(), attachmentId.toString());
+        //get the attachments from cache
         List<UploadedAttachment> attachments = attachmentCachingService.getAttachmentsForEvent(eventId.toString());
 
         //cache hit -> return
@@ -39,9 +39,13 @@ public class EventsAttachmentsService {
         }
 
         //cache miss
-        System.out.println("Attachment cache miss");
+
         // -> get the attachments from db
         List<EventsAttachments> rawAttachments = eventsAttachmentsRepository.findByEventId(eventId);
+        if (rawAttachments.size() == 0 ) {
+            return new ArrayList<>();
+        }
+
         List<UploadedAttachment> uploadedAttachments = new ArrayList<>();
         for (EventsAttachments attachment : rawAttachments) {
             uploadedAttachments.add(new UploadedAttachment(
@@ -53,7 +57,7 @@ public class EventsAttachmentsService {
             ));
         }
 
-        // -> store the attachments to cache.deleteAttachment(eventId.toString(), attachmentId.toString());
+        // -> store the attachments to cache
         attachmentCachingService.saveAttachments(eventId.toString(), uploadedAttachments);
 
         return uploadedAttachments;
@@ -90,7 +94,7 @@ public class EventsAttachmentsService {
             uploadedAttachments.add(uploadFileWithId);
         }
 
-        //store the metadata to cache.deleteAttachment(eventId.toString(), attachmentId.toString());
+        //store the metadata to cache
         attachmentCachingService.saveAttachments(eventId.toString(), uploadedAttachments);
 
         return uploadedAttachments;
