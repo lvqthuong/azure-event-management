@@ -1,26 +1,25 @@
 package com.example.fs19_azure.service;
 
-import com.example.fs19_azure.controller.response.GlobalResponse;
 import com.example.fs19_azure.dto.UploadedAttachment;
 import com.example.fs19_azure.entity.EventsAttachments;
 import com.example.fs19_azure.exceptions.AttachmentNotFoundException;
-import com.example.fs19_azure.exceptions.FileUploadException;
 import com.example.fs19_azure.repository.EventsAttachmentsRepository;
 import com.example.fs19_azure.service.azure.BlobStorageService;
+import com.example.fs19_azure.service.redis.EventsAttachmentsRedisService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.azure.storage.blob.BlobClientBuilder;
-import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobContainerClientBuilder;
 
-import java.io.IOException;
 import java.util.*;
 
 @Service
 public class EventsAttachmentsService {
+
+    @Autowired
+    private EventsAttachmentsRedisService attachmentCachingService;
+
     @Autowired
     private EventsAttachmentsRepository eventsAttachmentsRepository;
 
@@ -30,9 +29,25 @@ public class EventsAttachmentsService {
     private final int MAX_FILE_SIZE = 1024*1024*2; // 2MB
 
     public List<UploadedAttachment> getAttachmentsOfEvent(UUID eventId) {
-        List<EventsAttachments> attachments = eventsAttachmentsRepository.findByEventId(eventId);
+        //get the attachments from cache
+        List<UploadedAttachment> attachments = attachmentCachingService.getAttachmentsForEvent(eventId.toString());
+
+        //cache hit -> return
+        if (attachments.size() > 0) {
+            System.out.println("Attachment cache hit");
+            return attachments;
+        }
+
+        //cache miss
+
+        // -> get the attachments from db
+        List<EventsAttachments> rawAttachments = eventsAttachmentsRepository.findByEventId(eventId);
+        if (rawAttachments.size() == 0 ) {
+            return new ArrayList<>();
+        }
+
         List<UploadedAttachment> uploadedAttachments = new ArrayList<>();
-        for (EventsAttachments attachment : attachments) {
+        for (EventsAttachments attachment : rawAttachments) {
             uploadedAttachments.add(new UploadedAttachment(
                 attachment.getId().toString()
                 , attachment.getBlob_url()
@@ -41,11 +56,17 @@ public class EventsAttachmentsService {
                 , attachment.getBlob_size()
             ));
         }
+
+        // -> store the attachments to cache
+        attachmentCachingService.saveAttachments(eventId.toString(), uploadedAttachments);
+
         return uploadedAttachments;
     }
 
     public List<UploadedAttachment> uploadEventAttachments(UUID eventId, List<MultipartFile> files) {
         List<UploadedAttachment> uploadedAttachments = new ArrayList<>();
+
+        //uploading the files to Storage Service
         for (MultipartFile file : files) {
 
             //TODO: Implement the logic to check if the file size is less than 2MB
@@ -72,6 +93,10 @@ public class EventsAttachmentsService {
 
             uploadedAttachments.add(uploadFileWithId);
         }
+
+        //store the metadata to cache
+        attachmentCachingService.saveAttachments(eventId.toString(), uploadedAttachments);
+
         return uploadedAttachments;
     }
 
@@ -105,6 +130,9 @@ public class EventsAttachmentsService {
         if (result) {
             // Delete the file metadata from the database
             eventsAttachmentsRepository.deleteById(attachmentId);
+
+            // delete from cache
+            attachmentCachingService.deleteAttachment(eventId.toString(), attachmentId.toString());
         }
 
         return result;

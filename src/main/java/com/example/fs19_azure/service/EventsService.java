@@ -9,7 +9,7 @@ import com.example.fs19_azure.exceptions.GlobalException;
 import com.example.fs19_azure.repository.EventsRepository;
 import com.example.fs19_azure.repository.UsersRepository;
 
-import org.springframework.data.redis.core.RedisTemplate;
+import com.example.fs19_azure.service.redis.EventsRedisService;
 import jakarta.transaction.Transactional;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
@@ -25,10 +25,6 @@ import java.util.*;
 public class EventsService {
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-    private static final String EVENT_CACHE_KEY_PREFIX = "event:";
-
-    @Autowired
     private EventsRepository eventsRepository;
 
     @Autowired
@@ -36,6 +32,9 @@ public class EventsService {
 
     @Autowired
     private EventsAttachmentsService eventsAttachmentsService;
+
+    @Autowired
+    private EventsRedisService eventsCachingService;
 
     private static final Logger logger = LoggerFactory.getLogger(EventsService.class);
 
@@ -63,20 +62,15 @@ public class EventsService {
 
         //store in cache
         EventsWithAttachments eventsWithAttachments = EventsMapper.toEventsWithAttachments(event, new ArrayList<>());
-        redisTemplate.opsForValue().set(
-            EVENT_CACHE_KEY_PREFIX + event.getId()
-            , eventsWithAttachments
-        );
+        eventsCachingService.saveEvent(eventsWithAttachments.id(), eventsWithAttachments);
 
-        logger.info("Event created: {}", event.getId());
+        logger.info("Event created: {}", eventsWithAttachments.id());
         return eventsWithAttachments;
     }
 
     public EventsWithAttachments getEvent(UUID id) {
 
-        EventsWithAttachments eventFromCache = (EventsWithAttachments) redisTemplate.opsForValue().get(
-           EVENT_CACHE_KEY_PREFIX + id
-        );
+        EventsWithAttachments eventFromCache = eventsCachingService.getEvent(id.toString());
 
         //cache hit
         if (eventFromCache != null) {
@@ -84,53 +78,63 @@ public class EventsService {
         }
 
         //cache miss
+        // -> retrieve event from db
         Optional<Events> event = eventsRepository.findById(id);
         if (event.isEmpty()) {
             throw new GlobalException(HttpStatus.NOT_FOUND, ErrorMessage.EVENT_NOT_FOUND);
         }
 
+        // -> retrieve event attachments
         List<UploadedAttachment> attachments = eventsAttachmentsService.getAttachmentsOfEvent(id);
 
-        //store in cache
+        // -> convert to DTO
         eventFromCache = EventsMapper.toEventsWithAttachments(event.get(), attachments);
-        redisTemplate.opsForValue().set(
-            EVENT_CACHE_KEY_PREFIX + id
-            , eventFromCache
-        );
 
-        //convert to DTO
+        // -> store in cache
+        eventsCachingService.saveEvent(eventFromCache.id(), eventFromCache);
+
         return eventFromCache;
     }
 
     public List<EventsWithAttachments> getAllActiveEvents() {
         //retrieve all events from cache
-        Set<String> keys = redisTemplate.keys(EVENT_CACHE_KEY_PREFIX + "*");
+        List<EventsWithAttachments> eventsFromCache = eventsCachingService.getAllEvents();
 
-        // Retrieve values for each key
-        List<EventsWithAttachments> events = new ArrayList<>();
-        if (keys.stream().count() > 0) {
-            for (String key : keys) {
-                EventsWithAttachments event = (EventsWithAttachments) redisTemplate.opsForValue().get(key);
-                if (event != null) {
-                    events.add(event);
-                }
-            }
-            return events;
+        // cache hit
+        if (eventsFromCache.size() > 0) {
+            System.out.println("Events cache hit, return!");
+            return eventsFromCache;
         }
 
-        //if cache miss, fetch from database
-        List<Events> list = eventsRepository.findByDeletedFalse();
+        // cache miss, fetch from database
+        List<Events> eventsFromDB = eventsRepository.findByDeletedFalse();
         List<EventsWithAttachments> eventsWithAttachments = new ArrayList<>();
 
-        for (Events event : list) {
+        for (Events event : eventsFromDB) {
+            //store the event with empty attachments to cache
+            EventsWithAttachments e = EventsMapper.toEventsWithAttachments(event, new ArrayList<>());
+            eventsCachingService.saveEvent(e.id(), e);
+
+            //retrieve the attachments for event
             List<UploadedAttachment> attachments = eventsAttachmentsService.getAttachmentsOfEvent(event.getId());
-            eventsWithAttachments.add(EventsMapper.toEventsWithAttachments(event, attachments));
+            EventsWithAttachments updatedE = new EventsWithAttachments(
+                e.id(),
+                e.type(),
+                e.name(),
+                e.description(),
+                e.location(),
+                e.startDate(),
+                e.endDate(),
+                e.organizer(),
+                attachments,
+                e.metadata(),
+                e.updatedAt(),
+                e.createdAt()
+            );
+            eventsWithAttachments.add(updatedE);
 
             //store in cache
-            redisTemplate.opsForValue().set(
-                EVENT_CACHE_KEY_PREFIX + event.getId()
-                , EventsMapper.toEventsWithAttachments(event, attachments)
-            );
+            eventsCachingService.saveEvent(e.id(), e);
         }
         return eventsWithAttachments;
     }
@@ -160,11 +164,9 @@ public class EventsService {
             , eventsAttachmentsService.getAttachmentsOfEvent(updatedEvent.getId())
         );
 
-        //invalidate cache
-        redisTemplate.opsForValue().set(
-            EVENT_CACHE_KEY_PREFIX + updatedEvent.getId()
-            , updatedEventWithAttachments
-        );
+        //save to cache
+        eventsCachingService.saveEvent(updatedEventWithAttachments.id(), updatedEventWithAttachments);
+
         return updatedEventWithAttachments;
     }
 
@@ -176,7 +178,7 @@ public class EventsService {
         }
 
         //delete from cache
-        redisTemplate.delete(EVENT_CACHE_KEY_PREFIX + id);
+        eventsCachingService.deleteEvent(id.toString());
 
         return result;
     }
