@@ -25,9 +25,9 @@ spring:
           enabled: true
           base-uri: ${AUTHORIZATION_SERVER_BASE_URI}
           profile:
-            tenant-id: 9c393d8a-42f8-4fce-8ca9-44a852917008
+            tenant-id: ${AZURE_AD_B2C_TENANT_ID}
           credential:
-            client-id: 412c97ee-be7b-46bc-b707-8c8ec98e1bdc
+            client-id: ${AZURE_AD_B2C_CLIENT_ID}
           user-flows:
             sign-up-or-sign-in: ${SIGN_UP_OR_SIGN_IN_FLOW_NAME}
 server:
