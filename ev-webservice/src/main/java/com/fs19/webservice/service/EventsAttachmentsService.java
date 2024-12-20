@@ -1,14 +1,17 @@
 package com.fs19.webservice.service;
 
+import com.fs19.webservice.dto.UploadedAttachment;
 import com.fs19.webservice.entity.EventsAttachments;
+import com.fs19.webservice.exceptions.AttachmentNotFoundException;
 import com.fs19.webservice.repository.EventsAttachmentsRepository;
+import com.fs19.webservice.service.azure.BlobStorageService;
+import com.fs19.webservice.service.redis.EventsAttachmentsRedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import com.azure.storage.blob.BlobClientBuilder;
-import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobContainerClientBuilder;
+
 
 import java.io.IOException;
 import java.util.*;

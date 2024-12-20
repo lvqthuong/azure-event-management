@@ -1,9 +1,9 @@
-package com.example.fs19_azure.service.redis;
+package com.fs19.webservice.service.redis;
 
-import com.example.fs19_azure.dto.EventsWithAttachments;
-import com.example.fs19_azure.exceptions.GlobalException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fs19.webservice.dto.EventsWithAttachments;
+import com.fs19.webservice.exceptions.GlobalException;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;

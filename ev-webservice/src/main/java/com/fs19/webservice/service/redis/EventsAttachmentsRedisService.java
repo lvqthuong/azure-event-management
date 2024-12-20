@@ -1,7 +1,8 @@
-package com.example.fs19_azure.service.redis;
+package com.fs19.webservice.service.redis;
 
-import com.example.fs19_azure.dto.EventsWithAttachments;
-import com.example.fs19_azure.dto.UploadedAttachment;
+
+import com.fs19.webservice.dto.EventsWithAttachments;
+import com.fs19.webservice.dto.UploadedAttachment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
