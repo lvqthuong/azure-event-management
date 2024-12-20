@@ -1,13 +1,13 @@
-package com.example.fs19_azure.service;
+package com.fs19.webservice.service;
 
-import com.example.fs19_azure.dto.*;
-import com.example.fs19_azure.dto.mapper.EventsMapper;
-import com.example.fs19_azure.entity.Events;
-import com.example.fs19_azure.entity.Users;
-import com.example.fs19_azure.exceptions.ErrorMessage;
-import com.example.fs19_azure.exceptions.GlobalException;
-import com.example.fs19_azure.repository.EventsRepository;
-import com.example.fs19_azure.repository.UsersRepository;
+import com.fs19.webservice.dto.*;
+import com.fs19.webservice.dto.mapper.EventsMapper;
+import com.fs19.webservice.entity.Events;
+import com.fs19.webservice.entity.Users;
+import com.fs19.webservice.exceptions.ErrorMessage;
+import com.fs19.webservice.exceptions.GlobalException;
+import com.fs19.webservice.repository.EventsRepository;
+import com.fs19.webservice.repository.UsersRepository;
 
 import com.example.fs19_azure.service.redis.EventsRedisService;
 import jakarta.transaction.Transactional;

@@ -2,6 +2,8 @@ package com.fs19.webservice.dto.mapper;
 
 import com.fs19.webservice.dto.EventsRead;
 import com.fs19.webservice.dto.EventsUpdate;
+import com.fs19.webservice.dto.EventsWithAttachments;
+import com.fs19.webservice.dto.UploadedAttachment;
 import com.fs19.webservice.entity.Events;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;

@@ -1,6 +1,6 @@
 package com.fs19.webservice.dto;
 
-import com.example.fs19_azure.dto.json_validator.ValidJson;
+import com.fs19.webservice.dto.json_validator.ValidJson;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

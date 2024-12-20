@@ -1,4 +1,4 @@
-package com.example.fs19_azure.caching;
+package com.fs19.webservice.caching;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

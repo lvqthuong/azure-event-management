@@ -1,8 +1,8 @@
-package com.example.fs19_azure.controller;
+package com.fs19.webservice.controller;
 
-import com.example.fs19_azure.controller.response.GlobalResponse;
-import com.example.fs19_azure.dto.UploadedAttachment;
-import com.example.fs19_azure.service.EventsAttachmentsService;
+import com.fs19.webservice.controller.response.GlobalResponse;
+import com.fs19.webservice.dto.UploadedAttachment;
+import com.fs19.webservice.service.EventsAttachmentsService;
 import io.swagger.v3.oas.annotations.Parameter;
 
 import org.springframework.beans.factory.annotation.Autowired;

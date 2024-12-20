@@ -1,4 +1,4 @@
-package com.example.fs19_azure.dto.json_validator;
+package com.fs19.webservice.dto.json_validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

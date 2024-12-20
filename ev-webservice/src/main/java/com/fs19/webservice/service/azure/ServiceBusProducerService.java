@@ -1,8 +1,8 @@
-package com.example.fs19_azure.service.azure;
+package com.fs19.webservice.service.azure;
 
 import com.azure.messaging.servicebus.*;
-import com.example.fs19_azure.dto.EventsRegistrationsMessage;
-import com.example.fs19_azure.exceptions.SendMessageProcessingException;
+import com.fs19.webservice.dto.EventsRegistrationsMessage;
+import com.fs19.webservice.exceptions.SendMessageProcessingException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

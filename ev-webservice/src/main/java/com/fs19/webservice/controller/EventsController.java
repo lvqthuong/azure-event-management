@@ -4,6 +4,7 @@ import com.fs19.webservice.controller.response.GlobalResponse;
 import com.fs19.webservice.dto.EventsCreate;
 import com.fs19.webservice.dto.EventsRead;
 import com.fs19.webservice.dto.EventsUpdate;
+import com.fs19.webservice.dto.EventsWithAttachments;
 import com.fs19.webservice.entity.Events;
 import com.fs19.webservice.service.EventsService;
 import jakarta.validation.Valid;

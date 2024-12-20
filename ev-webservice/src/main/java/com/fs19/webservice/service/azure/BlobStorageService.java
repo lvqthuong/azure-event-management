@@ -1,12 +1,12 @@
-package com.example.fs19_azure.service.azure;
+package com.fs19.webservice.service.azure;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.models.BlobStorageException;
-import com.example.fs19_azure.dto.UploadedAttachment;
-import com.example.fs19_azure.exceptions.AttachmentNotFoundException;
-import com.example.fs19_azure.exceptions.FileUploadException;
+import com.fs19.webservice.dto.UploadedAttachment;
+import com.fs19.webservice.exceptions.AttachmentNotFoundException;
+import com.fs19.webservice.exceptions.FileUploadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

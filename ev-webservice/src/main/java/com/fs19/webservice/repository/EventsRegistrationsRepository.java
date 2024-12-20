@@ -1,6 +1,6 @@
-package com.example.fs19_azure.repository;
+package com.fs19.webservice.repository;
 
-import com.example.fs19_azure.entity.EventsRegistrations;
+import com.fs19.webservice.entity.EventsRegistrations;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

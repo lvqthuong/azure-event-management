@@ -1,14 +1,14 @@
-package com.example.fs19_azure.service;
+package com.fs19.webservice.service;
 
-import com.example.fs19_azure.dto.EventsRegistrationsMessage;
-import com.example.fs19_azure.entity.Events;
-import com.example.fs19_azure.entity.EventsRegistrations;
-import com.example.fs19_azure.entity.EventsRegistrationsStatus;
-import com.example.fs19_azure.exceptions.ErrorMessage;
-import com.example.fs19_azure.exceptions.GlobalException;
-import com.example.fs19_azure.repository.EventsRegistrationsRepository;
-import com.example.fs19_azure.repository.EventsRepository;
-import com.example.fs19_azure.service.azure.ServiceBusProducerService;
+import com.fs19.webservice.dto.EventsRegistrationsMessage;
+import com.fs19.webservice.entity.Events;
+import com.fs19.webservice.entity.EventsRegistrations;
+import com.fs19.webservice.entity.EventsRegistrationsStatus;
+import com.fs19.webservice.exceptions.ErrorMessage;
+import com.fs19.webservice.exceptions.GlobalException;
+import com.fs19.webservice.repository.EventsRegistrationsRepository;
+import com.fs19.webservice.repository.EventsRepository;
+import com.fs19.webservice.service.azure.ServiceBusProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

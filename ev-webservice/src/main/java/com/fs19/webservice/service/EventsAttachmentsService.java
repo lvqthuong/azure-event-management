@@ -1,15 +1,9 @@
-package com.example.fs19_azure.service;
+package com.fs19.webservice.service;
 
-import com.example.fs19_azure.controller.response.GlobalResponse;
-import com.example.fs19_azure.dto.UploadedAttachment;
-import com.example.fs19_azure.entity.EventsAttachments;
-import com.example.fs19_azure.exceptions.AttachmentNotFoundException;
-import com.example.fs19_azure.exceptions.FileUploadException;
-import com.example.fs19_azure.repository.EventsAttachmentsRepository;
-import com.example.fs19_azure.service.azure.BlobStorageService;
-import jakarta.transaction.Transactional;
+import com.fs19.webservice.entity.EventsAttachments;
+import com.fs19.webservice.repository.EventsAttachmentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.azure.storage.blob.BlobClientBuilder;

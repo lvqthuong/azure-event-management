@@ -1,4 +1,4 @@
-package com.example.fs19_azure.dto;
+package com.fs19.webservice.dto;
 
 import java.util.List;
 

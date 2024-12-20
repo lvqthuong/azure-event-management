@@ -22,12 +22,14 @@
     <form style="display:inline" method="get" action="/oauth2/authorization/B2C_1_reset_pwd">
         <button class="btn btn-md btn-primary btn-block" type="submit">Password reset</button>
     </form>
+
 </div>
 
 <div>
     <br/>
     <h2>Azure Active Directory B2C OIDC Login Successfully.</h2>
-    <h3>Welcome back <span style="color:cyan" th:text="${name}"></     span>!</h3>
+    <h3>Welcome back <span style="color:cyan" th:text="${name}"></span>!</h3>
+    <h3>AccessToken <span th:text="${accessToken}"></span>!</h3>
     <table border="1">
         <tr><th>Principal</th><th>Value</th></tr>
         <tr><th>name</th><th th:text="${name}"></th></tr>

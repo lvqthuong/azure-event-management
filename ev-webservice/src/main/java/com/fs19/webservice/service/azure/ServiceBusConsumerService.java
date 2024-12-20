@@ -1,11 +1,11 @@
-package com.example.fs19_azure.service.azure;
+package com.fs19.webservice.service.azure;
 
 import com.azure.messaging.servicebus.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.fs19_azure.dto.EventsRegistrationsMessage;
-import com.example.fs19_azure.service.EventsRegistrationsService;
+import com.fs19.webservice.dto.EventsRegistrationsMessage;
+import com.fs19.webservice.service.EventsRegistrationsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

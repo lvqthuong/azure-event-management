@@ -1,13 +1,9 @@
 package com.fs19.webservice.controller;
 
 import com.fs19.webservice.controller.response.GlobalResponse;
-import com.fs19.webservice.dto.EventsRegistrationsMessage;
-import com.fs19.webservice.entity.Events;
-import com.fs19.webservice.entity.EventsRegistrationsStatus;
-import com.fs19.webservice.exceptions.ErrorMessage;
-import com.fs19.webservice.exceptions.GlobalException;
-import com.fs19.webservice.repository.EventsRepository;
-import com.fs19.webservice.service.ServiceBusClientService;
+import com.fs19.webservice.entity.EventsRegistrations;
+import com.fs19.webservice.service.EventsRegistrationsService;
+import com.fs19.webservice.service.azure.ServiceBusProducerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -25,8 +25,6 @@ public class DataInitializer {
     @Autowired
     private EventsRepository eventsRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
-
     private UUID userId;
 
     @Bean
@@ -47,7 +45,7 @@ public class DataInitializer {
                 .build()
         );
         userId = usersRepository.findByEmail(newUserId + "-test@fs19java.com").getId();
-        logger.info("User created: {}", userId);
+        log.info("User created: {}", userId);
     }
 
     private void initEvents() {
@@ -63,7 +61,7 @@ public class DataInitializer {
                 .metadata("{ \"key\": \"value\" }")
                 .build());
 
-        logger.info("Event created: {}", event.getId());
+        log.info("Event created: {}", event.getId());
     }
 
 

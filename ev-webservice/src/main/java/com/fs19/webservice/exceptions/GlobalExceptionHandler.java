@@ -1,5 +1,6 @@
 package com.fs19.webservice.exceptions;
 
+import com.azure.storage.blob.models.BlobStorageException;
 import com.fs19.webservice.controller.response.GlobalResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

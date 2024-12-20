@@ -1,4 +1,4 @@
-package com.example.fs19_azure.exceptions;
+package com.fs19.webservice.exceptions;
 
 import java.io.IOException;
 

@@ -1,7 +1,7 @@
 package com.fs19.webservice;
 
-import com.example.fs19_azure.service.EventsService;
-import com.example.fs19_azure.service.azure.ServiceBusConsumerService;
+import com.fs19.webservice.service.EventsService;
+import com.fs19.webservice.service.azure.ServiceBusConsumerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
