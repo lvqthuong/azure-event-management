@@ -47,6 +47,3 @@ The Event Management System is a web application built with Java Spring Boot, Hi
 8. **Azure Functions processes the registration/unregistration** from the Service Bus queue, ensuring FIFO order, use transaction to modify event's properties.
 9. **Azure Functions updates the registration status in Cosmos DB** and may trigger other necessary actions such as sending confirmation emails.
 10. **Application Insights monitors and diagnoses issues** in the application.
-
-## Alternative account management strategy
-- Instead of managing ApplicationUser in the code base, you can consider using EntraID & Microsoft Graph to manage all registration. login, authentication (In this case, there will be no ApplicationUser in your code base, but only use UserId in Event registration. UserId will be taken from EntraId)
